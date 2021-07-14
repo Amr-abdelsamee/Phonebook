@@ -1,2 +1,2 @@
 # Phonebook
-a light bar phonebook made with C language
+A light bar phonebook made with C language
