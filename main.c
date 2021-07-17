@@ -9,7 +9,7 @@
 #define ADDRESS_SIZE 40
 #define PHONE_NO_SIZE 12
 #define EMAIL_SIZE 40
-#define FILE_NAME_SIZE 20
+#define FILE_NAME_SIZE 30
 
 
 
@@ -23,12 +23,12 @@ typedef struct
 
 typedef struct
 {
-    char fname[15];
-    char lname[15];
+    char fname[FIRST_NAME_SIZE];
+    char lname[LAST_NAME_SIZE];
     date DOB;
-    char address[40];
-    char phonum[12];
-    char email[30];
+    char address[ADDRESS_SIZE];
+    char phonum[PHONE_NO_SIZE];
+    char email[EMAIL_SIZE];
 } contact;
 
 
@@ -296,7 +296,7 @@ int again(int tempypos, int tempheight, HANDLE console)
 {
     gotoxy(xpos,++tempypos);
     tempheight = checkBoundary(3,tempypos,xpos,tempheight);
-    printf("Do the operation again?y/n");
+    printf("Do operation again?y/n");
     char respond[44];
     int again;
     gotoxy(xpos,++tempypos);
@@ -376,33 +376,35 @@ void load(HANDLE console)
 {
     drawTitle("Load");
     draw_box(height/2,width,xpos-1,ypos-1);
+    gotoxy(xpos, (height/2)-2);
+    printf("Note that:text in file must be in this format:");
+    gotoxy(xpos, (height/2)-1);
+    printf(" first name,last name,day,month,year of birth,");
+    gotoxy(xpos, (height/2));
+    printf(" address,phone number,email or program will crash");
+
     tempypos = ypos;
     FILE *f;
     gotoxy(xpos,tempypos);
     printf("Please enter file name in format(filename.txt)");
-    gotoxy(xpos,++tempypos);
-    ShowConsoleCursor(1, console);
-
-    gotoxy(xpos,++tempypos);
+    tempypos+=2;
+    gotoxy(xpos,tempypos);
     char *filename = enterData(FILE_NAME_SIZE, tempypos, console);
     f = fopen(filename,"r");
     free(filename);
-    char temp[20],*token;
+
     if(f!= NULL)
     {
         while(!feof(f))
         {
-            fscanf(f,"%[^,], ",s[count].fname);
-            fscanf(f,"%[^,], ",s[count].lname);
-            fscanf(f,"%[^,], ",temp);
-            token = strtok(temp, "-");
-            s[count].DOB.day = atoi(token);
-            token = strtok(NULL, "-");
-            s[count].DOB.month = atoi(token);
-            token = strtok(NULL, ",");
-            s[count].DOB.year = atoi(token);
-            fscanf(f,"%[^,], ",s[count].address);
-            fscanf(f,"%[^,], ",s[count].phonum);
+            char temp;
+            fscanf(f,"%[^,],",s[count].fname);
+            fscanf(f,"%[^,],",s[count].lname);
+            fscanf(f,"%d%c",&s[count].DOB.day,&temp);
+            fscanf(f,"%d%c",&s[count].DOB.month,&temp);
+            fscanf(f,"%d%c",&s[count].DOB.year,&temp);
+            fscanf(f,"%[^,],",s[count].address);
+            fscanf(f,"%[^,],",s[count].phonum);
             fscanf(f,"%[^\n]\n",s[count].email);
             count++;
         }
@@ -425,6 +427,7 @@ void Search(HANDLE console)
     check_file_exist();
     drawTitle("Search");
     draw_box(height,width,xpos-1,ypos-1);
+
     tempheight = height;
     tempypos = ypos;
     gotoxy(xpos,tempypos);
@@ -496,6 +499,7 @@ void Add(int f, HANDLE console)
     check_file_exist();
     drawTitle("Add");
     draw_box(height,width,xpos-1,ypos-1);
+
     if(f == 404)f = count;
 
     tempheight = height;
@@ -640,16 +644,19 @@ void Add(int f, HANDLE console)
         }
     }
 }
+
+
 void Modify(HANDLE console)
 {
     check_file_exist();
     drawTitle("Modify");
+     ShowConsoleCursor(0, console);
     draw_box(height,width,xpos-1,ypos-1);
+
     tempheight = height;
     tempypos = ypos;
     char *input;
     gotoxy(xpos,tempypos);
-    ShowConsoleCursor(1, console);
     printf("Enter the last name: ");
     gotoxy(xpos,++tempypos);
     input = enterData(EMAIL_SIZE, tempypos, console);
@@ -759,25 +766,24 @@ void Delete(HANDLE console)
 {
     check_file_exist();
     drawTitle("Delete");
-    draw_box(height,width,xpos-1,ypos-1);
     ShowConsoleCursor(0, console);
+    draw_box(height,width,xpos-1,ypos-1);
+
     tempheight = height;
     tempypos = ypos;
 
-    char entered_name[15];
+
     gotoxy(xpos,tempypos);
     printf("Enter the last name: ");
-    ShowConsoleCursor(1, console);
     gotoxy(xpos,++tempypos);
-    printf(">");
-    scanf("%s",entered_name);
-    ShowConsoleCursor(0, console);
+    char *input = enterData(LAST_NAME_SIZE, tempypos, console);
+
     int check = 0;
-    int x = strlen(entered_name);
+    int x = strlen(input);
 
     char srch[x];
-    strcpy(srch,entered_name);
-
+    strcpy(srch,input);
+free(input);
     for(i = 0; i < count; i++)
     {
         if( strcmp(srch, s[i].lname) == 0 )
@@ -896,6 +902,7 @@ void printer(HANDLE console)
     check_file_exist();
     drawTitle("Print");
     draw_box(height,width,xpos-1,ypos-1);
+
     tempheight = height;
     tempypos = ypos;
     Sort(xpos, tempypos, console);
@@ -944,6 +951,7 @@ void printer(HANDLE console)
         mainMenu("File is loaded","Not saved!");
     }
 }
+
 
 void Sort(int x, int y, HANDLE console)
 {
@@ -1016,6 +1024,7 @@ void Sort(int x, int y, HANDLE console)
     while(choise != 'A' && choise != 'B' && choise != 'a' && choise != 'b');
 }
 
+
 void EXIT(HANDLE console)
 {
     if(!file_exist)
@@ -1030,8 +1039,10 @@ void EXIT(HANDLE console)
     else
     {
         drawTitle("Exit");
-        draw_box(height/2,width,xpos-1,ypos-1);
         ShowConsoleCursor(0, console);
+        draw_box(height/2,width,xpos-1,ypos-1);
+
+
         tempheight = height;
         tempypos = ypos;
         gotoxy(xpos,tempypos);
@@ -1085,23 +1096,25 @@ void EXIT(HANDLE console)
 
 void save_data(HANDLE console)
 {
+
     check_file_exist();
     drawTitle("Save");
-    draw_box(height/2,width,xpos-1,ypos-1);
     ShowConsoleCursor(0, console);
+    draw_box(height/2,width,xpos-1,ypos-1);
+
     tempheight = height/2;
     tempypos = ypos;
-    char  filename[40];
+
     gotoxy(xpos,tempypos);
     printf("Name the file in which data will be saved: ");
     gotoxy(xpos,++tempypos);
     printf("e.g(filename.txt)");
-    ShowConsoleCursor(1, console);
+
     gotoxy(xpos,++tempypos);
-    printf("> ");
-    scanf("%s",filename);
+        char *input = enterData(FILE_NAME_SIZE, tempypos, console);
     FILE*f;
-    f = fopen(filename,"w");
+    f = fopen(input,"w");
+    free(input);
     for(i=0; i<count; i++)
     {
         fprintf(f,"%s,",s[i].fname);
@@ -1114,28 +1127,25 @@ void save_data(HANDLE console)
     gotoxy(xpos,++tempypos);
     printf("Your work has been saved!");
     fclose(f);
-    char respond = ' ';
-    do
+
+
+
+    int redo = again(tempypos, tempheight, console);
+    if(redo == 1)
     {
-        gotoxy(xpos,++tempypos);
-        printf("back to main menu?y/n");
-        gotoxy(xpos,++tempypos);
-        printf("> ");
-        scanf("%s",&respond);
-        if(respond == 'y' || respond == 'Y')mainMenu("File is loaded","Saved!");
-        if(respond == 'n' || respond == 'N')
-        {
-            gotoxy(xpos,++tempypos);
-            printf("program exit successfully!");
-            tempypos = tempheight + 2;
-            gotoxy(xpos,++tempypos);
-            exit(0);
-        }
-        gotoxy(xpos,++tempypos);
-        printf("Enter 'y' or 'n' only!\a");
-        tempypos-=3;
+        mainMenu("File is loaded","Saved!");
     }
-    while(respond != 'y' && respond != 'n' && respond != 'Y' && respond != 'N');
+    else
+    {
+        tempypos +=5;
+
+        xpos = width/2;
+        gotoxy(xpos,tempypos);
+        printf("program exit successfully!");
+        tempypos = tempheight + 4;
+        gotoxy(xpos,++tempypos);
+        exit(0);
+    }
 }
 
 void consoleWindow()
