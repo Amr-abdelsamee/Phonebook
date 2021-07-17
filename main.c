@@ -381,7 +381,7 @@ void load(HANDLE console)
     gotoxy(xpos, (height/2)-1);
     printf(" first name,last name,day,month,year of birth,");
     gotoxy(xpos, (height/2));
-    printf(" address,phone number,email or program will crash");
+    printf(" address,phone number,email");
 
     tempypos = ypos;
     FILE *f;
@@ -551,7 +551,9 @@ void Add(int f, HANDLE console)
             tempheight += 3;
         }
         gotoxy(xpos,++tempypos);
-        printf("Phone number:\n>");
+        printf("Phone number:");
+        gotoxy(xpos,++tempypos);
+        printf(">");
         scanf("%11s", s[f].phonum);
 
         int n = strlen(s[f].phonum);
@@ -915,7 +917,7 @@ void printer(HANDLE console)
             tempheight += 8;
         }
         gotoxy(xpos,++tempypos);
-        printf("No.%d",i);
+        printf("No.%d",i+1);
         gotoxy(xpos,++tempypos);
         printf(" First Name: %s",s[i].fname);
         gotoxy(xpos,++tempypos);
