@@ -338,80 +338,10 @@ void check_file_exist(void)
 */
 
 
-void* enterData(int max, int validateType, int tempypos, HANDLE console, int element_size)
-{
-    ShowConsoleCursor(1, console);
-    int i = 0;
-    int tempxpos = xpos+1;
-     size_t *entered = malloc(max * sizeof(size_t));
-    /*if(validateType == 0)
-    {
-        int *entered = malloc(max * sizeof(int));
-    }
-    else
-    {
-        char *entered = malloc(max * sizeof(char));
-    }*/
 
-    int cha;
-  //  gotoxy(xpos,tempypos);
-    _cputs(">");
- //   gotoxy(xpos+1,tempypos);
-    do
-    {
-        ++tempxpos;
-        cha = _getch();
-        //  cha = toupper( cha );
-        //if to handle the enter button and if backspace is pressed at the beginning
-        if(i == 0 && cha == 8)continue;
-        if(cha == 13)break;
-/*
-        //if to handle if only integers  is required
-        if(validateType == 0 && !isdigit(cha))
-        {
-            gotoxy(xpos,++tempypos);
-            printf("Only numbers!\a");
-            gotoxy(xpos, --tempypos);
-            continue;
-        }
 
-        //if to handle if only chars  is required
-        if(validateType == 1 && !isalpha(cha))
-        {
-            gotoxy(xpos,++tempypos);
-            printf("Only characters!\a");
-            gotoxy(xpos, --tempypos);
-            continue;
-        }
-*/
-        // if to handle erasing
-        if(cha == 8 && i != 0)
-        {
-            cha = ' ';
-            --tempxpos;
-    //        gotoxy(--tempxpos,tempypos);
-            _putch(cha);
-    //        gotoxy(tempxpos,tempypos);
-            continue;
-        }
 
-        if(validateType == 0)
-        {
-            printf("\niam 0");
-            entered[i++] = cha;
-        }
-        /*else
-        {
-            printf("iam 1");
-            entered[i++] = (char)cha;
-        }*/
-        _putch( cha );
-    }
-    while(i < max);
-    entered[i] = '\0';
-    ShowConsoleCursor(0, console);
-    return entered;
-}
+
 
 /*
 void load(HANDLE console)
