@@ -61,5 +61,5 @@ In case the user have loaded a file and exit the program
 ## Author
 This project was made by Amr Abdelsamee Youssef
 
-- **Email:**Amr_abdelsamee@yahoo.com
+- **Email:** Amr_abdelsamee@yahoo.com
 - **Facebook:**[Amr Abd ELsamee](https://www.facebook.com/Amr.Abdelsame3/)
