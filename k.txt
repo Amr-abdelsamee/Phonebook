@@ -1,6 +1,0 @@
-t,b,1-10-1982,362 11th street brooklyn,01208877955,tvindahl@gmail.com
-Simpson,Bethany,1-11-1982,11 greenway plaza houston tx,01255987895,bsimpson@gmail.com
-Vindahl,Thomas,1-10-1982,362 11th street brooklyn,01208877955,tvindahl@gmail.com
-Simpson,Bethany,1-11-1982,11 greenway plaza houston tx,01255987895,bsimpson@gmail.com
-Vindahl,Thomas,1-10-1982,362 11th street brooklyn,01208877955,tvindahl@gmail.com
-Simpson,Bethany,1-11-1982,11 greenway plaza houston tx,01255987895,bsimpson@gmail.com
