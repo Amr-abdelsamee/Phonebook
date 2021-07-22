@@ -3,6 +3,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <windows.h>
+#include "Console Window.h"
+#include "Menu.h"
 
 #define FIRST_NAME_SIZE 15
 #define LAST_NAME_SIZE 15
@@ -64,97 +66,10 @@ void mainMenu(char loadmessage[], char savemessage[])
     ShowConsoleCursor(0, console);
 
     drawTitle("Main");
-    int tempheight = height - 3;
-    int pos = 1;
-    char clicked;
     draw_box(height,width,xpos-1,ypos-1);
-    gotoxy(3,2);
-    printf("%s",loadmessage);
-    if(strcmp(savemessage," "))
-    {
-        printf(" - %s",savemessage);
-    }
-    do
-    {
-        SetConsoleTextAttribute(console,15);
-        gotoxy(width/2,tempheight/2);
-        printf("[1] Load");
-        gotoxy(width/2,(tempheight/2)+1);
-        printf("[2] Search");
-        gotoxy(width/2,(tempheight/2)+2);
-        printf("[3] Add");
-        gotoxy(width/2,(tempheight/2)+3);
-        printf("[4] Delete");
-        gotoxy(width/2,(tempheight/2)+4);
-        printf("[5] Modify");
-        gotoxy(width/2,(tempheight/2)+5);
-        printf("[6] Print");
-        gotoxy(width/2,(tempheight/2)+6);
-        printf("[7] Save");
-        gotoxy(width/2,(tempheight/2)+7);
-        printf("[8] Exit");
+    int selection = menu("Load Search Add Delete Modify Print Save Exit");
 
-        tempheight = height - 3;
-        switch(pos)
-        {
-        case 1:
-            SetConsoleTextAttribute(console,240);
-            gotoxy(width/2,tempheight/2);
-            printf("[1] Load");
-            break;
-        case 2:
-            SetConsoleTextAttribute(console,240);
-            gotoxy(width/2,(tempheight/2)+1);
-            printf("[2] Search");
-            break;
-        case 3:
-            SetConsoleTextAttribute(console,240);
-            gotoxy(width/2,(tempheight/2)+2);
-            printf("[3] Add");
-            break;
-        case 4:
-            SetConsoleTextAttribute(console,240);
-            gotoxy(width/2,(tempheight/2)+3);
-            printf("[4] Delete");
-            break;
-        case 5:
-            SetConsoleTextAttribute(console,240);
-            gotoxy(width/2,(tempheight/2)+4);
-            printf("[5] Modify");
-            break;
-        case 6:
-            SetConsoleTextAttribute(console,240);
-            gotoxy(width/2,(tempheight/2)+5);
-            printf("[6] Print");
-            break;
-        case 7:
-            SetConsoleTextAttribute(console,240);
-            gotoxy(width/2,(tempheight/2)+6);
-            printf("[7] Save");
-            break;
-        case 8:
-            SetConsoleTextAttribute(console,240);
-            gotoxy(width/2,(tempheight/2)+7);
-            printf("[8] Exit");
-            break;
-        }
-        clicked = getch();
-        if(clicked == 72)//if up arrow
-        {
-            pos--;
-            if(pos == 0) pos = 8;
-        }
-        if(clicked == 80)// if down arrow
-        {
-            pos++;
-            if(pos == 9)
-                pos = 1;
-        }
-    }
-    while(clicked != 13);// 13 represent the enter key
-    SetConsoleTextAttribute(console,15);
-
-    switch(pos)
+    switch(selection)
     {
     case 1:
         system("cls");
@@ -372,6 +287,7 @@ char* enterData(int max, int tempypos, HANDLE console)
 }
 
 
+
 void load(HANDLE console)
 {
     drawTitle("Load");
@@ -420,6 +336,7 @@ void load(HANDLE console)
         load(console);
     }
 }
+
 
 
 void Search(HANDLE console)
@@ -493,6 +410,8 @@ void Search(HANDLE console)
         mainMenu("File is loaded","Not saved!");
     }
 }
+
+
 
 void Add(int f, HANDLE console)
 {
@@ -648,6 +567,7 @@ void Add(int f, HANDLE console)
 }
 
 
+
 void Modify(HANDLE console)
 {
     check_file_exist();
@@ -762,6 +682,7 @@ void Modify(HANDLE console)
         mainMenu("File is loaded","Not saved!");
     }
 }
+
 
 
 void Delete(HANDLE console)
@@ -899,6 +820,7 @@ free(input);
 }
 
 
+
 void printer(HANDLE console)
 {
     check_file_exist();
@@ -953,6 +875,7 @@ void printer(HANDLE console)
         mainMenu("File is loaded","Not saved!");
     }
 }
+
 
 
 void Sort(int x, int y, HANDLE console)
@@ -1027,6 +950,7 @@ void Sort(int x, int y, HANDLE console)
 }
 
 
+
 void EXIT(HANDLE console)
 {
     if(!file_exist)
@@ -1096,6 +1020,7 @@ void EXIT(HANDLE console)
 }
 
 
+
 void save_data(HANDLE console)
 {
 
@@ -1148,50 +1073,4 @@ void save_data(HANDLE console)
         gotoxy(xpos,++tempypos);
         exit(0);
     }
-}
-
-void consoleWindow()
-{
-    //position the console window
-    //Getting the desktop hadle and rectangule
-    HWND   hwndScreen = GetDesktopWindow();
-    RECT   rectScreen;
-    HWND ConsoleWindow = GetForegroundWindow();
-    GetWindowRect(hwndScreen,&rectScreen);
-    //Set windows size(see the width problem)
-    SetWindowPos(ConsoleWindow,NULL,0,0,500,500, SWP_SHOWWINDOW);
-    // Get the current width and height of the console
-    RECT rConsole;
-    GetWindowRect (ConsoleWindow,&rConsole);
-    int Width = rConsole.right - rConsole.left;
-    int Height = rConsole.bottom - rConsole.top;
-    //caculate the window console to center of the screen
-    int ConsolePosX = ((rectScreen.right-rectScreen.left)/2-Width/2 );
-    int ConsolePosY = ((rectScreen.bottom-rectScreen.top)/2- Height/2 );
-    SetWindowPos(ConsoleWindow,NULL,ConsolePosX,ConsolePosY, Width, Height, SWP_SHOWWINDOW || SWP_NOSIZE);
-
-    //close the resize of console window
-    hwndScreen = GetConsoleWindow();
-    SetWindowLong(hwndScreen, GWL_STYLE, GetWindowLong(hwndScreen, GWL_STYLE) & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX);
-}
-
-void ShowConsoleCursor(int showFlag, HANDLE console)
-{
-
-    CONSOLE_CURSOR_INFO cursorinfo;
-    GetConsoleCursorInfo(console, &cursorinfo);
-    cursorinfo.bVisible = showFlag;
-    SetConsoleCursorInfo(console, &cursorinfo);
-}
-
-void Console_Font_Size(void)
-{
-    CONSOLE_FONT_INFOEX cfi;
-    cfi.cbSize = sizeof cfi;
-    cfi.nFont = 0;
-    cfi.dwFontSize.X = 9;
-    cfi.dwFontSize.Y = 18;
-    cfi.FontFamily = FF_DONTCARE;
-    cfi.FontWeight = FW_NORMAL;
-    SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);
 }
