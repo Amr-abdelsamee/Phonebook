@@ -1,13 +1,13 @@
-void consoleWindow()
+void windowSize(int h, int w)
 {
     //position the console window
     //Getting the desktop hadle and rectangule
-    HWND   hwndScreen = GetDesktopWindow();
-    RECT   rectScreen;
+    HWND hwndScreen = GetDesktopWindow();
+    RECT rectScreen;
     HWND ConsoleWindow = GetForegroundWindow();
     GetWindowRect(hwndScreen,&rectScreen);
-    //Set windows size(see the width problem)
-    SetWindowPos(ConsoleWindow,NULL,0,0,500,500, SWP_SHOWWINDOW);
+    //Set windows size
+    SetWindowPos(ConsoleWindow,NULL,0,0,w*12,h*30, SWP_SHOWWINDOW);
     // Get the current width and height of the console
     RECT rConsole;
     GetWindowRect (ConsoleWindow,&rConsole);
@@ -27,7 +27,6 @@ void consoleWindow()
 
 void ShowConsoleCursor(int showFlag, HANDLE console)
 {
-
     CONSOLE_CURSOR_INFO cursorinfo;
     GetConsoleCursorInfo(console, &cursorinfo);
     cursorinfo.bVisible = showFlag;

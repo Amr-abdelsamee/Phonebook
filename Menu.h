@@ -1,7 +1,7 @@
 #ifndef _MENUH_
 #define _MENUH_
 
-int menu(char* elements)//,int height, int width)
+int menu(char* elements, int height, int width)
 {
     HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
     ShowConsoleCursor(0, console); // hide the cursor
@@ -53,13 +53,13 @@ int menu(char* elements)//,int height, int width)
         SetConsoleTextAttribute(console,15);
         for(i = 0; i < elements_counter; i++)
         {
-            gotoxy(width/2,tempheight/2 + (i+1));
+            gotoxy(width/2, tempheight/2 + (i+1));
             printf("[%d] %s",i+1,list_element[i]);
         }
 
         tempheight = height - 3;
         SetConsoleTextAttribute(console,240);//240
-        gotoxy(width/2,tempheight/2 + (pos+1));
+        gotoxy(width/2, tempheight/2 + (pos+1));
         printf("[%d] %s",pos+1,list_element[pos]);
 
 
