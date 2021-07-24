@@ -19,7 +19,13 @@
 #define X_POS 3
 #define Y_POS 4
 
-
+/// problems in code:-
+/// 1- read integers for delete function crash if user enter chars
+/// 2- erase after typing in the enterdata() function
+/// 3- extend box() & check boundry() are not applied in the hole functions only in search() function
+/// 4- read file path because enterdata() function prevent long names as I make it do
+/// 5-
+/// 6-
 
 typedef struct
 {
@@ -44,9 +50,9 @@ typedef struct
 int count = 0; //count used to count number of contacts in the entered text file
 contact s[100];// max number of conatcts
 int file_exist = 0; // if 0 means no file is loaded into the program yet 1 means the opposite
-
 int tempheight; // holders for height used in function as temporary value
 int tempY_POS = 0; // holders for Y position used in function as temporary value
+
 
 char* enterData(int max, int tempY_POS, HANDLE console);
 
@@ -148,38 +154,6 @@ void draw_box(int height, int width, int x, int y)
 
 
 
-void extend_box(int height, int width,int x,int y)
-{
-    int i,j;
-    //| |
-    gotoxy(x,y);
-    for(i = 0; i < height; i++)
-    {
-        gotoxy(x,++y);
-        printf("%c",186);
-        for(j = 0; j < width; j++)
-            printf(" ");
-        printf("%c\n",186);
-    }
-    // +-+
-    gotoxy(x,++y);
-    printf("%c",200);
-    for(i = 0; i < width; i++)
-        printf("%c",205);
-    printf("%c",188);
-}
-
-
-
-void drawTitle(char title[])
-{
-    draw_box(1,11,WIDTH-9,0);
-    gotoxy(WIDTH-5,1);
-    printf("%s",title);
-}
-
-
-
 int checkBoundary(int addToHeight,int currentY_POS,int currentX_POS, int currentBoxHeight)
 {
     int i;
@@ -198,10 +172,43 @@ int checkBoundary(int addToHeight,int currentY_POS,int currentX_POS, int current
 
 
 
+void extend_box(int height, int width,int x,int y)
+{
+    int i,j;
+    //| |
+    gotoxy(x,y);
+    for(i = 0; i < height; i++)
+    {
+
+        printf("%c",186);
+        for(j = 0; j < width; j++)
+            printf(" ");
+        printf("%c\n",186);
+        gotoxy(x,++y);
+    }
+    // +-+
+    // gotoxy(x,++y);
+    printf("%c",200);
+    for(i = 0; i < width; i++)
+        printf("%c",205);
+    printf("%c",188);
+}
+
+
+
+void drawTitle(char title[])
+{
+    draw_box(1,11,WIDTH-9,0);
+    gotoxy(WIDTH-5,1);
+    printf("%s",title);
+}
+
+
+
 int again(int tempY_POS, int tempheight, HANDLE console)
 {
     gotoxy(X_POS, ++tempY_POS);
-    tempheight = checkBoundary(3, tempY_POS, X_POS, tempheight);
+    tempheight = checkBoundary(5, tempY_POS, X_POS, tempheight);
     printf("Do operation again?");
     gotoxy(X_POS, ++tempY_POS);
     int selection = menu("Yes No", tempY_POS*2+1, X_POS*2);
@@ -345,32 +352,40 @@ void Search(HANDLE console)
 
             gotoxy(X_POS,++tempY_POS);
             printf("-First name: %s",s[i].fname);
+
             gotoxy(X_POS,++tempY_POS);
             printf(" Last name: %s",s[i].lname);
+
             gotoxy(X_POS,++tempY_POS);
             printf(" Date of birth: %d-%d-%d", s[i].DOB.day, s[i].DOB.month, s[i].DOB.year);
+
             gotoxy(X_POS,++tempY_POS);
             printf(" Address: %s",s[i].address);
+
             gotoxy(X_POS,++tempY_POS);
             printf(" phone number: %s",s[i].phonum);
+
             gotoxy(X_POS,++tempY_POS);
             printf(" E-mail: %s",s[i].email);
         }
     }
     if(check == 1)
     {
+        tempheight = checkBoundary(2, tempY_POS, X_POS, tempheight);
         gotoxy(X_POS,++tempY_POS);
-        tempheight = checkBoundary(3,tempY_POS,X_POS,tempheight);
-        printf("Search is done!");
+        //  tempheight = checkBoundary(3,tempY_POS,X_POS,tempheight);
+        printf("Search is done! Y:%d,h:%d",tempY_POS,tempheight);
     }
     else
     {
+        tempheight = checkBoundary(2, tempY_POS, X_POS, tempheight);
         gotoxy(X_POS,++tempY_POS);
-        tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+        // tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
         printf("**Name is not found!!**\a");
     }
 
     // check if operation will be done again or do another operation
+    tempheight = checkBoundary(4, tempY_POS, X_POS, tempheight);
     int redo = again(tempY_POS, tempheight, console);
     if(redo == 0)
     {
