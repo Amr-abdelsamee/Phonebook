@@ -11,7 +11,7 @@
 #define LAST_NAME_SIZE 15
 #define ADDRESS_SIZE 40
 #define EMAIL_SIZE 40
-#define FILE_NAME_SIZE 50 // same as width of the frame
+#define FILE_NAME_SIZE 100 // same as width of the frame
 
 //Box frame
 #define HEIGHT 20
@@ -290,20 +290,28 @@ int enterNumber(char* number)
 void load(HANDLE console)
 {
     drawTitle("Load");
-    draw_box(HEIGHT/2,WIDTH,X_POS-1,Y_POS-1);
-    gotoxy(X_POS, (HEIGHT/2)-2);
-    printf("Note that:text in file must be in this format:");
-    gotoxy(X_POS, (HEIGHT/2)-1);
-    printf(" first name,last name,day,month,year of birth,");
-    gotoxy(X_POS, (HEIGHT/2));
-    printf(" address,phone number,email");
-
+    draw_box(3,WIDTH,X_POS-1,Y_POS-1);
     tempY_POS = Y_POS;
     FILE *f;
     gotoxy(X_POS,tempY_POS);
-    printf("Please enter file name in format(filename.txt)");
-    tempY_POS+=2;
-    gotoxy(X_POS,tempY_POS);
+    printf("Enter file path or drag and drop the file here:");
+    gotoxy(X_POS, ++tempY_POS);
+    printf("Note:file name can be used in format(filename.txt)");
+    gotoxy(X_POS, ++tempY_POS);
+    printf("but file must be in same directory");
+
+    //warnings messages
+    ++tempY_POS;
+    draw_box(3,WIDTH,X_POS-1,++tempY_POS);
+    gotoxy(X_POS, ++tempY_POS);
+    printf("Note:text in file must be in this format:");
+    gotoxy(X_POS, ++tempY_POS);
+    printf("first name,last name,day,month,year of birth,");
+    gotoxy(X_POS, ++tempY_POS);
+    printf("address,phone number,email");
+    ++tempY_POS;
+    gotoxy(X_POS, ++tempY_POS);
+
     char *filename = enterData(FILE_NAME_SIZE, tempY_POS, console);
     f = fopen(filename,"r");
     free(filename);
@@ -660,7 +668,7 @@ void Add(int f, HANDLE console)
 void Modify(HANDLE console)
 {
     check_file_exist();
-    drawTitle("Modify");
+    drawTitle("Edit");
     ShowConsoleCursor(0, console);
     draw_box(HEIGHT, WIDTH, X_POS-1, Y_POS-1);
 
@@ -706,7 +714,7 @@ void Modify(HANDLE console)
             gotoxy(X_POS,++tempY_POS);
             printf(" Address: %s",s[i].address);
             gotoxy(X_POS,++tempY_POS);
-            printf(" phone number: %s",s[i].phonum);
+            printf(" phone number: %lu",s[i].phonum);
             gotoxy(X_POS,++tempY_POS);
             printf(" E-mail: %s",s[i].email);
             gotoxy(X_POS,++tempY_POS);
