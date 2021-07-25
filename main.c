@@ -680,7 +680,7 @@ void Modify(HANDLE console)
     gotoxy(X_POS,++tempY_POS);
     input = enterData(EMAIL_SIZE, tempY_POS, console);
 
-    int check=0;
+    int numberOfFound = 0;
     int i,x = strlen(input);
 
     char srch[x];
@@ -690,14 +690,14 @@ void Modify(HANDLE console)
     {
         if( strcmp(srch, s[i].lname) == 0 )
         {
-            if(check == 0)
+            if(numberOfFound == 0)
             {
                 gotoxy(X_POS,++tempY_POS);
                 gotoxy(X_POS,++tempY_POS);
                 printf("Found contacts :-");
                 gotoxy(X_POS,++tempY_POS);
             }
-            check++;
+            numberOfFound++;
             if(i*9 > tempY_POS)
             {
                 extend_box(9, WIDTH, X_POS-1, tempY_POS);
@@ -721,23 +721,66 @@ void Modify(HANDLE console)
         }
     }
 
-    int y[check], z = 0;
-    for(i=0; i<count; i++)
+    int found[numberOfFound], z = 0;
+    for(i=0; i < count; i++)
     {
         if( strcmp(srch, s[i].lname) == 0 )
         {
-            y[z] = i;
+            found[z] = i;
             z++;
         }
     }
 
-    if(check)
+    if(numberOfFound)
     {
         int n;
-        z = 1;
         tempY_POS += 3;
         draw_box(3, WIDTH, X_POS-1, tempY_POS);
-        while(z && !isdigit(n))
+        int valid = 0;
+        int exist = 0;
+        char* editIndex;
+        do
+        {
+            tempheight = checkBoundary(3,tempY_POS,X_POS,tempheight);
+            gotoxy(X_POS,++tempY_POS);
+            printf("Enter contact number to Edit: ");
+            gotoxy(X_POS,++tempY_POS);
+            editIndex  = enterData(1 + (int)log10(count), tempY_POS, console); //1 + (int)log10(count) get the length of the total number of contacts
+            valid = enterNumber(editIndex);
+            if(!valid)
+            {
+                tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+                gotoxy(X_POS,++tempY_POS);
+                printf("**Numbers only!**\a");
+            }
+
+
+            if(valid)
+            {
+                n = atoi(editIndex);
+                for(i = 0; i < numberOfFound; i++)
+                {
+
+                    if(n == found[i])
+                    {
+                        exist = 1;
+                    }
+                }
+
+                if(!exist)
+                {
+                    tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+                    gotoxy(X_POS,++tempY_POS);
+                    printf("**Numbers does not exist!**\a");
+                }
+            }
+    }
+        while(!valid || !exist);
+        free(editIndex);
+
+
+
+       /* while(z && !isdigit(n))
         {
             gotoxy(X_POS,tempY_POS+2);
             ShowConsoleCursor(1, console);
@@ -749,7 +792,7 @@ void Modify(HANDLE console)
                 if(n == y[i]) z = 0;
             }
             tempY_POS -= 2;
-        }
+        }*/
         system("cls");
         Add(n, console);
         if(tempY_POS >= tempheight)
