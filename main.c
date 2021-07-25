@@ -10,6 +10,7 @@
 #define FIRST_NAME_SIZE 15
 #define LAST_NAME_SIZE 15
 #define ADDRESS_SIZE 40
+#define PHONE_SIZE 15
 #define EMAIL_SIZE 40
 #define FILE_NAME_SIZE 100 // same as width of the frame
 
@@ -33,7 +34,7 @@ typedef struct
     char lname[LAST_NAME_SIZE];
     date DOB;
     char address[ADDRESS_SIZE];
-    unsigned long phonum;
+    char phonum[PHONE_SIZE];
     char email[EMAIL_SIZE];
 } contact;
 
@@ -327,7 +328,7 @@ void load(HANDLE console)
             fscanf(f,"%d%c",&s[count].DOB.month,&temp);
             fscanf(f,"%d%c",&s[count].DOB.year,&temp);
             fscanf(f,"%[^,],",s[count].address);
-            fscanf(f,"%lu%c",&s[count].phonum);
+            fscanf(f,"%[^,],",&s[count].phonum);
             fscanf(f,"%[^\n]\n",s[count].email);
             count++;
         }
@@ -389,7 +390,7 @@ void Search(HANDLE console)
             printf(" Address: %s",s[i].address);
             extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS,++tempY_POS);
-            printf(" phone number: %lu",s[i].phonum);
+            printf(" phone number: %s",s[i].phonum);
             extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS,++tempY_POS);
             printf(" E-mail: %s",s[i].email);
@@ -428,7 +429,7 @@ void Add(int f, HANDLE console)
 {
     check_file_exist();
     drawTitle("Add");
-    draw_box(HEIGHT,WIDTH,X_POS-1,Y_POS-1);
+    draw_box(HEIGHT+3,WIDTH,X_POS-1,Y_POS-1);
 
     if(f == 404)f = count;
 
@@ -489,19 +490,19 @@ void Add(int f, HANDLE console)
         gotoxy(X_POS,++tempY_POS);
         printf("Day:");
         gotoxy(X_POS,++tempY_POS);
-        day = enterData(2, tempY_POS, console);
+        day = enterData(3, tempY_POS, console);
 
         extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
         gotoxy(X_POS,++tempY_POS);
         printf("Month:");
         gotoxy(X_POS,++tempY_POS);
-        month = enterData(2, tempY_POS, console);
+        month = enterData(3, tempY_POS, console);
 
         extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
         gotoxy(X_POS,++tempY_POS);
         printf("Year:");
         gotoxy(X_POS,++tempY_POS);
-        year = enterData(4, tempY_POS, console);
+        year = enterData(5, tempY_POS, console);
 
         if(!strlen(day) || !strlen(month) || !strlen(year))
         {
@@ -526,7 +527,7 @@ void Add(int f, HANDLE console)
         {
             valid = 1;
         }
-        if((s[f].DOB.day < 0 || s[f].DOB.day > 31)||(s[f].DOB.month > 12 || s[f].DOB.month < 0)||(s[f].DOB.year > 2021 || s[f].DOB.year < 1900))
+        if((atoi(day) < 0 || atoi(day) > 31)||(atoi(month) > 12 || atoi(month) < 0)||(atoi(year) > 2021 || atoi(year) < 1900))
         {
             extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS, ++tempY_POS);
@@ -558,7 +559,7 @@ void Add(int f, HANDLE console)
         gotoxy(X_POS,++tempY_POS);
         printf("Phone number: ");
         gotoxy(X_POS,++tempY_POS);
-        phone  = enterData(11, tempY_POS, console);
+        phone  = enterData(13, tempY_POS, console);
         valid = enterNumber(phone);
         if(!valid)
         {
@@ -577,7 +578,7 @@ void Add(int f, HANDLE console)
         }
     }
     while(!valid);
-    s[f].phonum = atol(phone);
+    strcpy(s[f].phonum, phone);
     free(phone);
 
 
@@ -690,7 +691,7 @@ void Modify(HANDLE console)
             printf(" Address: %s",s[i].address);
             extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS,++tempY_POS);
-            printf(" phone number: %lu",s[i].phonum);
+            printf(" phone number: %s",s[i].phonum);
             extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS,++tempY_POS);
             printf(" E-mail: %s",s[i].email);
@@ -832,7 +833,7 @@ void Delete(HANDLE console)
             printf(" Address: %s",s[i].address);
             extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS,++tempY_POS);
-            printf(" phone number: %lu",s[i].phonum);
+            printf(" phone number: %s",s[i].phonum);
             extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS,++tempY_POS);
             printf(" E-mail: %s",s[i].email);
@@ -960,7 +961,7 @@ void printer(HANDLE console)
         printf(" Address: %s",s[i].address);
         extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
         gotoxy(X_POS,++tempY_POS);
-        printf(" Phone Nember: %lu",s[i].phonum);
+        printf(" Phone Nember: %s",s[i].phonum);
         extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
         gotoxy(X_POS,++tempY_POS);
         printf(" E-mail: %s",s[i].email);
@@ -1149,7 +1150,7 @@ void save_data(HANDLE console)
         fprintf(f,"%s,",s[i].lname);
         fprintf(f,"%d-%d-%d,", s[i].DOB.day, s[i].DOB.month, s[i].DOB.year);
         fprintf(f,"%s,",s[i].address);
-        fprintf(f,"%lu,",s[i].phonum);
+        fprintf(f,"%s,",s[i].phonum);
         fprintf(f,"%s\n",s[i].email);
     }
     gotoxy(X_POS,++tempY_POS);
