@@ -69,8 +69,8 @@ void mainMenu(char loadmessage[], char savemessage[])
     drawTitle("Main");
     draw_box(HEIGHT,WIDTH,X_POS-1,Y_POS-1);
     gotoxy(X_POS, Y_POS-2);
-    printf("%s",loadmessage);
-    int selection = menu("Load Search Add Delete Modify Print Save Exit", HEIGHT, WIDTH);
+    printf("%s  %s",loadmessage, savemessage);
+    int selection = menu("Load View Search Add Delete Edit Sort Save Exit", HEIGHT, WIDTH);
 
     switch(selection)
     {
@@ -80,29 +80,32 @@ void mainMenu(char loadmessage[], char savemessage[])
         break;
     case 1:
         system("cls");
-        Search(console);
-        break;
+        printer(console);
     case 2:
         system("cls");
-        Add(404,console);
+        Search(console);
         break;
     case 3:
         system("cls");
-        Delete(console);
+        Add(404,console);
         break;
     case 4:
         system("cls");
-        Modify(console);
+        Delete(console);
         break;
     case 5:
         system("cls");
-        printer(console);
+        Modify(console);
         break;
     case 6:
         system("cls");
-        save_data(console);
+        Sort(X_POS, tempY_POS, console);
         break;
     case 7:
+        system("cls");
+        save_data(console);
+        break;
+    case 8:
         system("cls");
         EXIT(console);
         break;
@@ -928,13 +931,10 @@ void Delete(HANDLE console)
 void printer(HANDLE console)
 {
     check_file_exist();
-    drawTitle("Print");
+    drawTitle("View");
     draw_box(HEIGHT,WIDTH,X_POS-1,Y_POS-1);
-
     tempheight = HEIGHT;
     tempY_POS = Y_POS;
-    Sort(X_POS, tempY_POS, console);
-    tempY_POS += 3;
     int i;
     for(i = 0; i < count; i++)
     {
@@ -943,7 +943,7 @@ void printer(HANDLE console)
             extend_box(8,WIDTH,X_POS-1,tempY_POS);
             tempheight += 8;
         }
-        gotoxy(X_POS,++tempY_POS);
+        gotoxy(X_POS,tempY_POS);
         printf("No.%d",i+1);
         gotoxy(X_POS,++tempY_POS);
         printf(" First Name: %s",s[i].fname);
@@ -983,18 +983,23 @@ void printer(HANDLE console)
 
 
 
-void Sort(int x, int y, HANDLE console)
+void Sort(HANDLE console)
 {
+    check_file_exist();
+    drawTitle("Sort");
+    draw_box(HEIGHT/2,WIDTH,X_POS-1,Y_POS-1);
+    tempheight = HEIGHT/2;
+    tempY_POS = Y_POS;
     ShowConsoleCursor(0, console);
     int j;
     char choise;
-    gotoxy(x,y);
+    gotoxy(X_POS,tempY_POS);
     printf("A/Sort by last name\n");
-    gotoxy(x,++y);
+    gotoxy(X_POS,++tempY_POS);
     printf("B/Sort by date of birth\n");
     do
     {
-        gotoxy(x,++y);
+        gotoxy(X_POS,++tempY_POS);
         printf("Enter your choise: ");
         ShowConsoleCursor(1, console);
         scanf("%s",&choise);
@@ -1045,13 +1050,26 @@ void Sort(int x, int y, HANDLE console)
         }
         else
         {
-            gotoxy(x,++y);
+            gotoxy(X_POS,++tempY_POS);
             printf("**please enter 'A' or 'B' only**\a");
-            y -= 2;
-            gotoxy(x,y);
+            tempY_POS -= 2;
+            gotoxy(X_POS,tempY_POS);
         }
     }
     while(choise != 'A' && choise != 'B' && choise != 'a' && choise != 'b');
+    gotoxy(X_POS,++tempY_POS);
+            printf("Sort done successfully!");
+        // check if operation will be done again or do another operation
+    int redo = again(tempY_POS, tempheight, console);
+    if(redo == 0)
+    {
+        Sort(console);
+    }
+    else
+    {
+        system("cls");
+        mainMenu("File is Sorted", "Not saved!");
+    }
 }
 
 
