@@ -990,76 +990,70 @@ void Sort(HANDLE console)
     draw_box(HEIGHT/2,WIDTH,X_POS-1,Y_POS-1);
     tempheight = HEIGHT/2;
     tempY_POS = Y_POS;
-    ShowConsoleCursor(0, console);
+    gotoxy(X_POS, tempY_POS);
+    printf("A-sort by last name");
+    gotoxy(X_POS, ++tempY_POS);
+    printf("B-sort by data of birth");
+    gotoxy(X_POS, ++tempY_POS);
+    int selection = menu("A B", tempY_POS*2+1, X_POS*2);
+    gotoxy(X_POS, ++tempY_POS);
+    int i;
     int j;
-    char choise;
-    gotoxy(X_POS,tempY_POS);
-    printf("A/Sort by last name\n");
-    gotoxy(X_POS,++tempY_POS);
-    printf("B/Sort by date of birth\n");
-    do
+    contact temp;
+    if (selection == 0)
     {
-        gotoxy(X_POS,++tempY_POS);
-        printf("Enter your choise: ");
-        ShowConsoleCursor(1, console);
-        scanf("%s",&choise);
-        int i;
-        int j;
-        contact temp;
-        if (choise == 'A' || choise == 'a')
+        for (i = 0; i < count; i++)
         {
-            for (i = 0; i < count; i++)
+            for (j = i + 1; j < count; j++)
             {
-                for (j = i + 1; j < count; j++)
+                if (s[i].lname[0] > s[j].lname[0])
                 {
-                    if (s[i].lname[0] > s[j].lname[0])
-                    {
-                        temp= s[i];
-                        s[i] = s[j];
-                        s[j] = temp;
-                    }
+                    temp= s[i];
+                    s[i] = s[j];
+                    s[j] = temp;
                 }
             }
-        }
-        else if (choise == 'B' || choise == 'b')
-        {
-            for (i = 0; i < count; i++)
-            {
-                for (j = i + 1; j < count; j++)
-                {
-                    if (s[i].DOB.year > s[j].DOB.year )
-                    {
-                        temp = s[i];
-                        s[i] = s[j];
-                        s[j] = temp;
-                    }
-                    else if (s[i].DOB.year == s[j].DOB.year && s[i].DOB.month > s[j].DOB.month)
-                    {
-                        temp = s[i];
-                        s[i] = s[j];
-                        s[j] = temp;
-                    }
-                    else if (s[i].DOB.year == s[j].DOB.year && s[i].DOB.month == s[j].DOB.month && s[i].DOB.day > s[j].DOB.day)
-                    {
-                        temp = s[i];
-                        s[i] = s[j];
-                        s[j] = temp;
-                    }
-                }
-            }
-        }
-        else
-        {
-            gotoxy(X_POS,++tempY_POS);
-            printf("**please enter 'A' or 'B' only**\a");
-            tempY_POS -= 2;
-            gotoxy(X_POS,tempY_POS);
         }
     }
-    while(choise != 'A' && choise != 'B' && choise != 'a' && choise != 'b');
-    gotoxy(X_POS,++tempY_POS);
-            printf("Sort done successfully!");
-        // check if operation will be done again or do another operation
+    else if (selection == 1)
+    {
+        for (i = 0; i < count; i++)
+        {
+            for (j = i + 1; j < count; j++)
+            {
+                if (s[i].DOB.year > s[j].DOB.year )
+                {
+                    temp = s[i];
+                    s[i] = s[j];
+                    s[j] = temp;
+                }
+                else if (s[i].DOB.year == s[j].DOB.year && s[i].DOB.month > s[j].DOB.month)
+                {
+                    temp = s[i];
+                    s[i] = s[j];
+                    s[j] = temp;
+                }
+                else if (s[i].DOB.year == s[j].DOB.year && s[i].DOB.month == s[j].DOB.month && s[i].DOB.day > s[j].DOB.day)
+                {
+                    temp = s[i];
+                    s[i] = s[j];
+                    s[j] = temp;
+                }
+            }
+        }
+    }
+
+    if(selection == 0)
+    {
+        gotoxy(X_POS,++tempY_POS);
+        printf("Sort by last name done successfully!");
+    }
+    if(selection == 1)
+    {
+        gotoxy(X_POS,++tempY_POS);
+        printf("Sort by date of birth done successfully!");
+    }
+    // check if operation will be done again or do another operation
     int redo = again(tempY_POS, tempheight, console);
     if(redo == 0)
     {
