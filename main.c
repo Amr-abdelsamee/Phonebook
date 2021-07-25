@@ -774,25 +774,25 @@ void Modify(HANDLE console)
                     printf("**Numbers does not exist!**\a");
                 }
             }
-    }
+        }
         while(!valid || !exist);
         free(editIndex);
 
 
 
-       /* while(z && !isdigit(n))
-        {
-            gotoxy(X_POS,tempY_POS+2);
-            ShowConsoleCursor(1, console);
-            printf("Please a Enter valid Contact number: ");
-            scanf("%d",&n);
-            ShowConsoleCursor(0, console);
-            for(i=0; i<check; i++)
-            {
-                if(n == y[i]) z = 0;
-            }
-            tempY_POS -= 2;
-        }*/
+        /* while(z && !isdigit(n))
+         {
+             gotoxy(X_POS,tempY_POS+2);
+             ShowConsoleCursor(1, console);
+             printf("Please a Enter valid Contact number: ");
+             scanf("%d",&n);
+             ShowConsoleCursor(0, console);
+             for(i=0; i<check; i++)
+             {
+                 if(n == y[i]) z = 0;
+             }
+             tempY_POS -= 2;
+         }*/
         system("cls");
         Add(n, console);
         if(tempY_POS >= tempheight)
@@ -958,9 +958,6 @@ void Delete(HANDLE console)
         gotoxy(X_POS,++tempY_POS);
         printf("Name is not found!!\a");
     }
-
-
-
 
 
     // check if operation will be done again or do another operation
@@ -1139,51 +1136,31 @@ void EXIT(HANDLE console)
 
         tempheight = HEIGHT;
         tempY_POS = Y_POS;
-        gotoxy(X_POS,tempY_POS);
-        printf("Any unsaved data will be lost!");
-        gotoxy(X_POS,++tempY_POS);
-        printf("Are you sure you want to exit?y/n");
+        char message1[] = "Any unsaved data will be lost!";
+        char message2[] = "Are you sure you want to exit?";
+        char message3[] = "program exit successfully!";
+        gotoxy(((WIDTH-strlen(message1))/2)+2,tempY_POS);
+        printf("%s",message1);
+        gotoxy(((WIDTH-strlen(message2))/2)+2,++tempY_POS);
+        printf("%s",message2);
 
+        draw_box(2, WIDTH-10, X_POS+4, tempY_POS*2-2);
+        int selection = menu("yes no", HEIGHT, WIDTH);
 
-        char    again = ' ';
-        do
+        switch(selection)
         {
-            if((tempY_POS+4) >= tempheight)
-            {
-                extend_box(4, WIDTH, X_POS-1, tempY_POS);
-                tempheight += 4;
-            }
-            gotoxy(X_POS,++tempY_POS);
-            ShowConsoleCursor(1, console);
-            scanf("%s",&again);
-            ShowConsoleCursor(0, console);
-
-            if(again == 'y')
-            {
-                gotoxy(X_POS,++tempY_POS);
-                printf("program exit successfully!");
-                tempY_POS = HEIGHT/2 + 2;
-                gotoxy(X_POS, ++tempY_POS);
-                exit(0);
-            }
-            else if(again == 'n')
-            {
-                break;
-            }
-            else
-            {
-                if(tempY_POS >= tempheight)
-                {
-                    extend_box(3, WIDTH, X_POS-1, tempY_POS);
-                    tempheight += 3;
-                }
-                gotoxy(X_POS, ++tempY_POS);
-                printf("Enter 'y' or 'n' only!\a");
-                tempY_POS -= 2;
-            }
+        case 0:
+            draw_box(2, WIDTH-10, X_POS+4, tempY_POS*2-2);
+            gotoxy(((WIDTH-strlen(message3))/2)+2,tempY_POS*2-1);
+            printf("%s",message3);
+            tempY_POS = HEIGHT/2 + 2;
+            gotoxy(X_POS, tempY_POS+2);
+            exit(0);
+            break;
+        case 1:
+            mainMenu("File is loaded","Not saved!");
+            break;
         }
-        while(again != 'y' && again != 'n');
-        mainMenu("File is loaded","Not saved!");
     }
 }
 
