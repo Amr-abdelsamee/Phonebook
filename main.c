@@ -6,7 +6,7 @@
 #include "Console Window.h"
 #include "Menu.h"
 
-#define MAX_CONTACTS 100
+#define MAX_CONTACTS 500
 #define FIRST_NAME_SIZE 15
 #define LAST_NAME_SIZE 15
 #define ADDRESS_SIZE 40
@@ -274,7 +274,6 @@ void load(HANDLE console)
     drawTitle("Load");
     draw_box(3,WIDTH,X_POS-1,Y_POS-1);
     tempY_POS = Y_POS;
-    FILE *f;
     gotoxy(X_POS,tempY_POS);
     printf("Enter file path or drag and drop the file here:");
     gotoxy(X_POS, ++tempY_POS);
@@ -295,11 +294,30 @@ void load(HANDLE console)
     gotoxy(X_POS, ++tempY_POS);
 
     char *filename = enterData(FILE_NAME_SIZE, tempY_POS, console);
+    FILE *f;
+    FILE *f2;
     f = fopen(filename,"r");
+    f2 = fopen(filename,"r"); // temp file to count the lines from it
     free(filename);
 
     if(f!= NULL)
     {
+        int lines = 0;
+        char newLineReader;
+        for (newLineReader = getc(f2); newLineReader != EOF; newLineReader = getc(f2))
+        {
+            if (newLineReader == '\n')
+                lines++;
+        }
+        fclose(f2);
+
+        if(lines > MAX_CONTACTS)
+        {
+        gotoxy(X_POS-1,Y_POS-2);
+        printf("Error!!MAX contacts is %d!\a",MAX_CONTACTS);
+        load(console);
+        }
+
         while(!feof(f))
         {
             char temp;
@@ -658,19 +676,26 @@ void Modify(HANDLE console)
             extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS,++tempY_POS);
             printf("Contact number %d",i);
-            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);gotoxy(X_POS,++tempY_POS);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
+            gotoxy(X_POS,++tempY_POS);
             printf(" First name: %s",s[i].fname);
-            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);gotoxy(X_POS,++tempY_POS);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
+            gotoxy(X_POS,++tempY_POS);
             printf(" Last name: %s",s[i].lname);
-            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);gotoxy(X_POS,++tempY_POS);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
+            gotoxy(X_POS,++tempY_POS);
             printf(" Date of birth: %d-%d-%d", s[i].DOB.day, s[i].DOB.month, s[i].DOB.year);
-           extend_box(3, WIDTH, X_POS-1,tempY_POS+1); gotoxy(X_POS,++tempY_POS);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
+            gotoxy(X_POS,++tempY_POS);
             printf(" Address: %s",s[i].address);
-           extend_box(3, WIDTH, X_POS-1,tempY_POS+1); gotoxy(X_POS,++tempY_POS);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
+            gotoxy(X_POS,++tempY_POS);
             printf(" phone number: %lu",s[i].phonum);
-          extend_box(3, WIDTH, X_POS-1,tempY_POS+1);  gotoxy(X_POS,++tempY_POS);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
+            gotoxy(X_POS,++tempY_POS);
             printf(" E-mail: %s",s[i].email);
-          extend_box(3, WIDTH, X_POS-1,tempY_POS+1);  gotoxy(X_POS,++tempY_POS);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
+            gotoxy(X_POS,++tempY_POS);
         }
     }
 
@@ -733,7 +758,7 @@ void Modify(HANDLE console)
 
         system("cls");
         Add(n, console);
-       extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
+        extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
         gotoxy(X_POS,++tempY_POS);
         printf("Modification complete!");
     }
@@ -793,19 +818,26 @@ void Delete(HANDLE console)
             extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS,++tempY_POS);
             printf("Contact No.%d",i);
-            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);gotoxy(X_POS,++tempY_POS);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
+            gotoxy(X_POS,++tempY_POS);
             printf(" First name: %s",s[i].fname);
-           extend_box(3, WIDTH, X_POS-1,tempY_POS+1); gotoxy(X_POS,++tempY_POS);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
+            gotoxy(X_POS,++tempY_POS);
             printf(" Last name: %s",s[i].lname);
-           extend_box(3, WIDTH, X_POS-1,tempY_POS+1); gotoxy(X_POS,++tempY_POS);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
+            gotoxy(X_POS,++tempY_POS);
             printf(" Date of birth: %d-%d-%d", s[i].DOB.day, s[i].DOB.month, s[i].DOB.year);
-           extend_box(3, WIDTH, X_POS-1,tempY_POS+1); gotoxy(X_POS,++tempY_POS);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
+            gotoxy(X_POS,++tempY_POS);
             printf(" Address: %s",s[i].address);
-           extend_box(3, WIDTH, X_POS-1,tempY_POS+1); gotoxy(X_POS,++tempY_POS);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
+            gotoxy(X_POS,++tempY_POS);
             printf(" phone number: %lu",s[i].phonum);
-           extend_box(3, WIDTH, X_POS-1,tempY_POS+1); gotoxy(X_POS,++tempY_POS);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
+            gotoxy(X_POS,++tempY_POS);
             printf(" E-mail: %s",s[i].email);
-           extend_box(3, WIDTH, X_POS-1,tempY_POS+1); gotoxy(X_POS,++tempY_POS);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
+            gotoxy(X_POS,++tempY_POS);
 
         }
     }
