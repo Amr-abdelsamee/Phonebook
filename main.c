@@ -19,14 +19,6 @@
 #define X_POS 3
 #define Y_POS 4
 
-/// problems in code:-
-//1- read integers for delete function crash if user enter chars -- DONE
-/// 2- erase after typing in the enterdata() function
-/// 3- extend box() & check boundry() are not applied in the hole functions only in search() function
-/// 4- read file path because enterdata() function prevent long names as I make it do
-/// 5-
-/// 6-
-
 typedef struct
 {
     int day;
@@ -234,34 +226,37 @@ char* enterData(int max, int tempY_POS, HANDLE console)
 {
     ShowConsoleCursor(1, console);
     int i = 0;
-    int tempX_POS = X_POS+1;
+    int tempX_POS = X_POS;
     char *entered = malloc(max * sizeof(char));
 
-
     int cha;
-    gotoxy(X_POS,tempY_POS);
+    gotoxy(tempX_POS, tempY_POS);
     _cputs(">");
-    gotoxy(X_POS+1,tempY_POS);
+    gotoxy(++tempX_POS, tempY_POS);
+    //tempX_POS = 4
     do
     {
-        ++tempX_POS;
         cha = _getch();
-        //if to handle if the backspace is pressed at the beginning
-        if(i == 0 && cha == 8)continue;
         if(cha == 13)break;
 
         // if to handle erasing
-        if(cha == 8 && i != 0)
+        if(cha == 8 && i == 0)continue;
+        if(cha == 8)
         {
-            --tempX_POS;
-            gotoxy(--tempX_POS,tempY_POS);
-            cha = ' ';
-            _putch(cha);
-            gotoxy(tempX_POS,tempY_POS);
-            continue;
+
+            if(tempX_POS > X_POS && tempX_POS-1 != X_POS)
+            {
+                gotoxy(--tempX_POS,tempY_POS);
+                cha = ' ';
+                _putch(cha);
+                gotoxy(tempX_POS,tempY_POS);
+                --i;
+                continue;
+            }
         }
         entered[i++] = (char)cha;
         _putch( cha );
+        ++tempX_POS;
     }
     while(i < max);
     entered[i] = '\0';
@@ -857,27 +852,7 @@ void Delete(HANDLE console)
             }
         }
         while(!valid || !exist);
-
         free(deleteIndex);
-
-        /*
-            while(!valid)
-            {
-                gotoxy(X_POS,tempY_POS);
-                printf("Enter contact number to delete: ");
-                ShowConsoleCursor(1, console);
-                scanf("%d",&n);
-                ShowConsoleCursor(0, console);
-
-                for(i = 0; i < found; i++)
-                {
-                    if(n == y[i])
-                    {
-                        valid = 1;
-                    }
-                }
-            }*/
-
 
         // delete goes here
         for(i = n; i < count + 1; i++)
