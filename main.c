@@ -42,7 +42,6 @@ typedef struct
 int count = 0; //count used to count number of contacts in the entered text file
 contact s[MAX_CONTACTS];// max number of conatcts
 int file_exist = 0; // if 0 means no file is loaded into the program yet 1 means the opposite
-int tempheight; // holders for height used in function as temporary value
 int tempY_POS = 0; // holders for Y position used in function as temporary value
 
 
@@ -154,26 +153,9 @@ void draw_box(int height, int width, int x, int y)
 
 
 
-int checkBoundary(int addToHeight,int currentY_POS,int currentX_POS, int currentBoxHeight)
-{
-    int i;
-    int temp = currentY_POS;
-    for(i = 1; i <= addToHeight ; i++)
-    {
-        if(temp - (Y_POS-1) > currentBoxHeight) // (Y_POS-1) here because the y position count from 0
-        {
-            extend_box(addToHeight, WIDTH, currentX_POS-1, currentY_POS);
-            return currentBoxHeight + addToHeight;
-        }
-        temp++;
-    }
-    return currentBoxHeight;
-}
-
-
-
 void extend_box(int height, int width,int x,int y)
 {
+    if(y-Y_POS < HEIGHT)return;
     int i,j;
     //| |
     gotoxy(x,y);
@@ -187,7 +169,6 @@ void extend_box(int height, int width,int x,int y)
         gotoxy(x,++y);
     }
     // +-+
-    // gotoxy(x,++y);
     printf("%c",200);
     for(i = 0; i < width; i++)
         printf("%c",205);
@@ -205,10 +186,12 @@ void drawTitle(char title[])
 
 
 
-int again(int tempY_POS, int tempheight, HANDLE console)
+int again(int tempY_POS, HANDLE console)
 {
+    extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
     gotoxy(X_POS, ++tempY_POS);
-    tempheight = checkBoundary(5, tempY_POS, X_POS, tempheight);
+
+
     printf("Do operation again?");
     gotoxy(X_POS, ++tempY_POS);
     int selection = menu("Yes No", tempY_POS*2+1, X_POS*2);
@@ -220,7 +203,7 @@ int again(int tempY_POS, int tempheight, HANDLE console)
 void check_file_exist(void)
 {
     if(file_exist)return;
-    else mainMenu("Load a file first!!\a\a"," ");
+    else mainMenu("Load a file first!!\a"," ");
 }
 
 
@@ -236,7 +219,6 @@ char* enterData(int max, int tempY_POS, HANDLE console)
     gotoxy(tempX_POS, tempY_POS);
     _cputs(">");
     gotoxy(++tempX_POS, tempY_POS);
-    //tempX_POS = 4
     do
     {
         cha = _getch();
@@ -352,7 +334,6 @@ void Search(HANDLE console)
     drawTitle("Search");
     draw_box(HEIGHT,WIDTH,X_POS-1,Y_POS-1);
 
-    tempheight = HEIGHT;
     tempY_POS = Y_POS;
     gotoxy(X_POS,tempY_POS);
     printf("Enter the last name: ");
@@ -376,46 +357,42 @@ void Search(HANDLE console)
                 check = 1;
                 gotoxy(X_POS,++tempY_POS);
             }
-
-            tempheight = checkBoundary(8,tempY_POS,X_POS,tempheight);
-
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS,++tempY_POS);
-            printf("-First name: %s",s[i].fname);
-
+            printf("Contact No.%d",i);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS,++tempY_POS);
-            printf(" Last name: %s",s[i].lname);
-
+            printf(" First name: %s",s[i].fname);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS,++tempY_POS);
             printf(" Date of birth: %d-%d-%d", s[i].DOB.day, s[i].DOB.month, s[i].DOB.year);
-
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS,++tempY_POS);
             printf(" Address: %s",s[i].address);
-
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS,++tempY_POS);
             printf(" phone number: %lu",s[i].phonum);
-
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS,++tempY_POS);
             printf(" E-mail: %s",s[i].email);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
+            gotoxy(X_POS,++tempY_POS);
         }
     }
     if(check == 1)
     {
-        tempheight = checkBoundary(2, tempY_POS, X_POS, tempheight);
+        extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
         gotoxy(X_POS,++tempY_POS);
-        //  tempheight = checkBoundary(3,tempY_POS,X_POS,tempheight);
-        printf("Search is done! Y:%d,h:%d",tempY_POS,tempheight);
+        printf("Search is done!");
     }
     else
     {
-        tempheight = checkBoundary(2, tempY_POS, X_POS, tempheight);
-        gotoxy(X_POS,++tempY_POS);
-        // tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+        extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
         printf("**Name is not found!!**\a");
     }
 
     // check if operation will be done again or do another operation
-    tempheight = checkBoundary(4, tempY_POS, X_POS, tempheight);
-    int redo = again(tempY_POS, tempheight, console);
+    int redo = again(tempY_POS, console);
     if(redo == 0)
     {
         Search(console);
@@ -437,7 +414,6 @@ void Add(int f, HANDLE console)
 
     if(f == 404)f = count;
 
-    tempheight = HEIGHT;
     tempY_POS = Y_POS;
     gotoxy(X_POS, tempY_POS);
 
@@ -453,14 +429,14 @@ void Add(int f, HANDLE console)
     // last name
     do
     {
-        tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+        extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
         gotoxy(X_POS,++tempY_POS);
         printf("Last name: ");
         gotoxy(X_POS,++tempY_POS);
         input = enterData(LAST_NAME_SIZE, tempY_POS, console);
         if(!strlen(input))
         {
-            tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS, ++tempY_POS);
             printf("**Last name can not be empty**\a");
             valid = 0;
@@ -488,27 +464,22 @@ void Add(int f, HANDLE console)
 
     do
     {
-        if(tempY_POS >= tempheight)
-        {
-            extend_box(3,WIDTH,X_POS-1,tempY_POS);
-            tempheight += 3;
-        }
         gotoxy(X_POS,++tempY_POS);
         printf("Date Of Birth(day month year):");
 
-        tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+        extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
         gotoxy(X_POS,++tempY_POS);
         printf("Day:");
         gotoxy(X_POS,++tempY_POS);
         day = enterData(2, tempY_POS, console);
 
-        tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+        extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
         gotoxy(X_POS,++tempY_POS);
         printf("Month:");
         gotoxy(X_POS,++tempY_POS);
         month = enterData(2, tempY_POS, console);
 
-        tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+        extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
         gotoxy(X_POS,++tempY_POS);
         printf("Year:");
         gotoxy(X_POS,++tempY_POS);
@@ -516,7 +487,7 @@ void Add(int f, HANDLE console)
 
         if(!strlen(day) || !strlen(month) || !strlen(year))
         {
-            tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS, ++tempY_POS);
             printf("**some info are missing**\a");
             valid = 0;
@@ -528,7 +499,7 @@ void Add(int f, HANDLE console)
 
         if(!dayValid || !monthValid || !yearValid )
         {
-            tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS, ++tempY_POS);
             printf("**Invalid Date**\a");
             valid = 0;
@@ -539,7 +510,7 @@ void Add(int f, HANDLE console)
         }
         if((s[f].DOB.day < 0 || s[f].DOB.day > 31)||(s[f].DOB.month > 12 || s[f].DOB.month < 0)||(s[f].DOB.year > 2021 || s[f].DOB.year < 1900))
         {
-            tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS, ++tempY_POS);
             printf("**Incorrect Date**\a");
             valid = 0;
@@ -565,7 +536,7 @@ void Add(int f, HANDLE console)
     do
     {
         int error1 = 0;
-        tempheight = checkBoundary(3,tempY_POS,X_POS,tempheight);
+        extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
         gotoxy(X_POS,++tempY_POS);
         printf("Phone number: ");
         gotoxy(X_POS,++tempY_POS);
@@ -573,7 +544,7 @@ void Add(int f, HANDLE console)
         valid = enterNumber(phone);
         if(!valid)
         {
-            tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS,++tempY_POS);
             printf("**Invalid number**\a");
             error1 = 1;
@@ -582,7 +553,7 @@ void Add(int f, HANDLE console)
         if((strlen(phone) < 11 || strlen(phone) > 11) && !error1)
         {
             valid = 0;
-            tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS,++tempY_POS);
             printf("**Phone number must be 11 digit**\a");
         }
@@ -592,17 +563,12 @@ void Add(int f, HANDLE console)
     free(phone);
 
 
-
     int check = 0, i = 0;
     char x[20], y = '@';
 
     while(check == 0)
     {
-        if(tempY_POS >= tempheight)
-        {
-            extend_box(3,WIDTH,X_POS-1,tempY_POS);
-            tempheight += 3;
-        }
+        extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
         gotoxy(X_POS,++tempY_POS);
         printf("E-mail : ");
         gotoxy(X_POS,++tempY_POS);
@@ -629,11 +595,7 @@ void Add(int f, HANDLE console)
         }
         if(check == 0)
         {
-            if(tempY_POS >= tempheight)
-            {
-                extend_box(3, WIDTH, X_POS-1, tempY_POS);
-                tempheight += 3;
-            }
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS,++tempY_POS);
             printf("**Invalid email!!**\a");
         }
@@ -641,16 +603,12 @@ void Add(int f, HANDLE console)
     if(f == count)
     {
         count++;
-        if(tempY_POS >= tempheight)
-        {
-            extend_box(3, WIDTH, X_POS-1, tempY_POS);
-            tempheight += 3;
-        }
+        extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
         gotoxy(X_POS,++tempY_POS);
         printf("**Add is done successfully!**");
 
         // check if operation will be done again or do another operation
-        int redo = again(tempY_POS, tempheight, console);
+        int redo = again(tempY_POS, console);
         if(redo == 0)
         {
             Add(404,console);
@@ -671,9 +629,8 @@ void Modify(HANDLE console)
     drawTitle("Edit");
     ShowConsoleCursor(0, console);
     draw_box(HEIGHT, WIDTH, X_POS-1, Y_POS-1);
-
-    tempheight = HEIGHT;
     tempY_POS = Y_POS;
+
     char *input;
     gotoxy(X_POS,tempY_POS);
     printf("Enter the last name: ");
@@ -698,26 +655,22 @@ void Modify(HANDLE console)
                 gotoxy(X_POS,++tempY_POS);
             }
             numberOfFound++;
-            if(i*9 > tempY_POS)
-            {
-                extend_box(9, WIDTH, X_POS-1, tempY_POS);
-                tempheight += 9;
-            }
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS,++tempY_POS);
             printf("Contact number %d",i);
-            gotoxy(X_POS,++tempY_POS);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);gotoxy(X_POS,++tempY_POS);
             printf(" First name: %s",s[i].fname);
-            gotoxy(X_POS,++tempY_POS);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);gotoxy(X_POS,++tempY_POS);
             printf(" Last name: %s",s[i].lname);
-            gotoxy(X_POS,++tempY_POS);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);gotoxy(X_POS,++tempY_POS);
             printf(" Date of birth: %d-%d-%d", s[i].DOB.day, s[i].DOB.month, s[i].DOB.year);
-            gotoxy(X_POS,++tempY_POS);
+           extend_box(3, WIDTH, X_POS-1,tempY_POS+1); gotoxy(X_POS,++tempY_POS);
             printf(" Address: %s",s[i].address);
-            gotoxy(X_POS,++tempY_POS);
+           extend_box(3, WIDTH, X_POS-1,tempY_POS+1); gotoxy(X_POS,++tempY_POS);
             printf(" phone number: %lu",s[i].phonum);
-            gotoxy(X_POS,++tempY_POS);
+          extend_box(3, WIDTH, X_POS-1,tempY_POS+1);  gotoxy(X_POS,++tempY_POS);
             printf(" E-mail: %s",s[i].email);
-            gotoxy(X_POS,++tempY_POS);
+          extend_box(3, WIDTH, X_POS-1,tempY_POS+1);  gotoxy(X_POS,++tempY_POS);
         }
     }
 
@@ -741,15 +694,15 @@ void Modify(HANDLE console)
         char* editIndex;
         do
         {
-            tempheight = checkBoundary(3,tempY_POS,X_POS,tempheight);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS,++tempY_POS);
             printf("Enter contact number to Edit: ");
             gotoxy(X_POS,++tempY_POS);
-            editIndex  = enterData(1 + (int)log10(count), tempY_POS, console); //1 + (int)log10(count) get the length of the total number of contacts
+            editIndex  = enterData(2 + (int)log10(count), tempY_POS, console); //1 + (int)log10(count) get the length of the total number of contacts
             valid = enterNumber(editIndex);
             if(!valid)
             {
-                tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+                extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
                 gotoxy(X_POS,++tempY_POS);
                 printf("**Numbers only!**\a");
             }
@@ -769,7 +722,7 @@ void Modify(HANDLE console)
 
                 if(!exist)
                 {
-                    tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+                    extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
                     gotoxy(X_POS,++tempY_POS);
                     printf("**Numbers does not exist!**\a");
                 }
@@ -778,28 +731,9 @@ void Modify(HANDLE console)
         while(!valid || !exist);
         free(editIndex);
 
-
-
-        /* while(z && !isdigit(n))
-         {
-             gotoxy(X_POS,tempY_POS+2);
-             ShowConsoleCursor(1, console);
-             printf("Please a Enter valid Contact number: ");
-             scanf("%d",&n);
-             ShowConsoleCursor(0, console);
-             for(i=0; i<check; i++)
-             {
-                 if(n == y[i]) z = 0;
-             }
-             tempY_POS -= 2;
-         }*/
         system("cls");
         Add(n, console);
-        if(tempY_POS >= tempheight)
-        {
-            extend_box(3, WIDTH, X_POS-1, tempY_POS);
-            tempheight += 3;
-        }
+       extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
         gotoxy(X_POS,++tempY_POS);
         printf("Modification complete!");
     }
@@ -811,7 +745,7 @@ void Modify(HANDLE console)
     }
 
     // check if operation will be done again or do another operation
-    int redo = again(tempY_POS, tempheight, console);
+    int redo = again(tempY_POS, console);
     if(redo == 0)
     {
         Modify(console);
@@ -831,8 +765,6 @@ void Delete(HANDLE console)
     drawTitle("Delete");
     ShowConsoleCursor(0, console);
     draw_box(HEIGHT, WIDTH, X_POS-1, Y_POS-1);
-
-    tempheight = HEIGHT;
     tempY_POS = Y_POS;
 
 
@@ -858,27 +790,22 @@ void Delete(HANDLE console)
                 printf("Found contacts :-");
             }
             numberOfFound++;
-            if(i*9 > tempY_POS)
-            {
-                extend_box(9,WIDTH,X_POS-1,tempY_POS);
-                tempheight += 10;
-            }
-
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS,++tempY_POS);
             printf("Contact No.%d",i);
-            gotoxy(X_POS,++tempY_POS);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);gotoxy(X_POS,++tempY_POS);
             printf(" First name: %s",s[i].fname);
-            gotoxy(X_POS,++tempY_POS);
+           extend_box(3, WIDTH, X_POS-1,tempY_POS+1); gotoxy(X_POS,++tempY_POS);
             printf(" Last name: %s",s[i].lname);
-            gotoxy(X_POS,++tempY_POS);
+           extend_box(3, WIDTH, X_POS-1,tempY_POS+1); gotoxy(X_POS,++tempY_POS);
             printf(" Date of birth: %d-%d-%d", s[i].DOB.day, s[i].DOB.month, s[i].DOB.year);
-            gotoxy(X_POS,++tempY_POS);
+           extend_box(3, WIDTH, X_POS-1,tempY_POS+1); gotoxy(X_POS,++tempY_POS);
             printf(" Address: %s",s[i].address);
-            gotoxy(X_POS,++tempY_POS);
+           extend_box(3, WIDTH, X_POS-1,tempY_POS+1); gotoxy(X_POS,++tempY_POS);
             printf(" phone number: %lu",s[i].phonum);
-            gotoxy(X_POS,++tempY_POS);
+           extend_box(3, WIDTH, X_POS-1,tempY_POS+1); gotoxy(X_POS,++tempY_POS);
             printf(" E-mail: %s",s[i].email);
-            gotoxy(X_POS,++tempY_POS);
+           extend_box(3, WIDTH, X_POS-1,tempY_POS+1); gotoxy(X_POS,++tempY_POS);
 
         }
     }
@@ -903,35 +830,32 @@ void Delete(HANDLE console)
         char* deleteIndex;
         do
         {
-            tempheight = checkBoundary(3,tempY_POS,X_POS,tempheight);
+            extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
             gotoxy(X_POS,++tempY_POS);
             printf("Enter contact number to delete: ");
             gotoxy(X_POS,++tempY_POS);
-            deleteIndex  = enterData(1 + (int)log10(count), tempY_POS, console); //1 + (int)log10(count) get the length of the total number of contacts
+            deleteIndex  = enterData(2 + (int)log10(count), tempY_POS, console); //1 + (int)log10(count) get the length of the total number of contacts
             valid = enterNumber(deleteIndex);
             if(!valid)
             {
-                tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+                extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
                 gotoxy(X_POS,++tempY_POS);
                 printf("**Numbers only!**\a");
             }
-
 
             if(valid)
             {
                 n = atoi(deleteIndex);
                 for(i = 0; i < numberOfFound; i++)
                 {
-
                     if(n == found[i])
                     {
                         exist = 1;
                     }
                 }
-
                 if(!exist)
                 {
-                    tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+                    extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
                     gotoxy(X_POS,++tempY_POS);
                     printf("**Numbers does not exist!**\a");
                 }
@@ -948,20 +872,20 @@ void Delete(HANDLE console)
         --count;
 
 
-        tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+        extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
         gotoxy(X_POS,++tempY_POS);
         printf("Delete complete!");
     }
     else
     {
-        tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+        extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
         gotoxy(X_POS,++tempY_POS);
         printf("Name is not found!!\a");
     }
 
 
     // check if operation will be done again or do another operation
-    int redo = again(tempY_POS, tempheight, console);
+    int redo = again(tempY_POS, console);
     if(redo == 0)
     {
         system("cls");
@@ -981,43 +905,43 @@ void printer(HANDLE console)
     check_file_exist();
     drawTitle("View");
     draw_box(HEIGHT,WIDTH,X_POS-1,Y_POS-1);
-    tempheight = HEIGHT;
     tempY_POS = Y_POS;
+    gotoxy(X_POS,tempY_POS);
+    printf("My contacts:-");
     int i;
     for(i = 0; i < count; i++)
     {
-        if((tempY_POS+8) >= tempheight)
-        {
-            extend_box(8,WIDTH,X_POS-1,tempY_POS);
-            tempheight += 8;
-        }
-        gotoxy(X_POS,tempY_POS);
+        extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
+        gotoxy(X_POS,++tempY_POS);
         printf("No.%d",i+1);
+        extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
         gotoxy(X_POS,++tempY_POS);
         printf(" First Name: %s",s[i].fname);
+        extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
         gotoxy(X_POS,++tempY_POS);
         printf(" Last Name: %s",s[i].lname);
+        extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
         gotoxy(X_POS,++tempY_POS);
         printf(" Date of birth: %d-%d-%d", s[i].DOB.day, s[i].DOB.month, s[i].DOB.year);
+        extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
         gotoxy(X_POS,++tempY_POS);
         printf(" Address: %s",s[i].address);
+        extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
         gotoxy(X_POS,++tempY_POS);
         printf(" Phone Nember: %lu",s[i].phonum);
+        extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
         gotoxy(X_POS,++tempY_POS);
         printf(" E-mail: %s",s[i].email);
+        extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
         gotoxy(X_POS,++tempY_POS);
     }
-    if((tempY_POS+6) >= tempheight)
-    {
-        extend_box(6, WIDTH, X_POS-1, tempY_POS);
-        tempheight += 6;
-    }
+    extend_box(3, WIDTH, X_POS-1,tempY_POS+1);
     gotoxy(X_POS,++tempY_POS);
     printf("Print is done!");
     gotoxy(X_POS,++tempY_POS);
 
     // check if operation will be done again or do another operation
-    int redo = again(tempY_POS, tempheight, console);
+    int redo = again(tempY_POS, console);
     if(redo == 0)
     {
         printer(console);
@@ -1036,7 +960,6 @@ void Sort(HANDLE console)
     check_file_exist();
     drawTitle("Sort");
     draw_box(HEIGHT/2,WIDTH,X_POS-1,Y_POS-1);
-    tempheight = HEIGHT/2;
     tempY_POS = Y_POS;
     gotoxy(X_POS, tempY_POS);
     printf("A-sort by last name");
@@ -1102,7 +1025,7 @@ void Sort(HANDLE console)
         printf("Sort by date of birth done successfully!");
     }
     // check if operation will be done again or do another operation
-    int redo = again(tempY_POS, tempheight, console);
+    int redo = again(tempY_POS, console);
     if(redo == 0)
     {
         Sort(console);
@@ -1133,8 +1056,6 @@ void EXIT(HANDLE console)
         ShowConsoleCursor(0, console);
         draw_box(HEIGHT/2, WIDTH, X_POS-1, Y_POS-1);
 
-
-        tempheight = HEIGHT;
         tempY_POS = Y_POS;
         char message1[] = "Any unsaved data will be lost!";
         char message2[] = "Are you sure you want to exit?";
@@ -1154,71 +1075,71 @@ void EXIT(HANDLE console)
             printf("%s",message3);
             tempY_POS = HEIGHT/2 + 2;
             gotoxy(X_POS, tempY_POS+2);
-            exit(0);}
-            else
-            {
-                mainMenu("File is loaded","Not saved!");
-            }
-        }
-    }
-
-
-
-    void save_data(HANDLE console)
-    {
-
-        check_file_exist();
-        drawTitle("Save");
-        ShowConsoleCursor(0, console);
-        draw_box(HEIGHT/2, WIDTH, X_POS-1, Y_POS-1);
-
-        tempheight = HEIGHT/2;
-        tempY_POS = Y_POS;
-
-        gotoxy(X_POS,tempY_POS);
-        printf("Name the file in which data will be saved: ");
-
-        gotoxy(X_POS,++tempY_POS);
-        char *input = enterData(FILE_NAME_SIZE, tempY_POS, console);
-
-        char holder[strlen(input)];
-        strcpy(holder,input);
-        free(input);
-        strcat(holder, ".txt");
-
-        FILE*f;
-        f = fopen(holder,"w");
-
-        int i;
-        for(i = 0; i<count; i++)
-        {
-            fprintf(f,"%s,",s[i].fname);
-            fprintf(f,"%s,",s[i].lname);
-            fprintf(f,"%d-%d-%d,", s[i].DOB.day, s[i].DOB.month, s[i].DOB.year);
-            fprintf(f,"%s,",s[i].address);
-            fprintf(f,"%lu,",s[i].phonum);
-            fprintf(f,"%s\n",s[i].email);
-        }
-        gotoxy(X_POS,++tempY_POS);
-        printf("Your work has been saved!");
-        fclose(f);
-
-        gotoxy(X_POS,++tempY_POS);
-        printf("Exit the program?");
-        int selection = menu("yes no", HEIGHT, WIDTH);
-        if(selection == 0)
-        {
-            char message3[] = "program exit successfully!";
-            draw_box(2, WIDTH-10, X_POS+4, tempY_POS*2-5);
-            gotoxy(((WIDTH-strlen(message3))/2)+2,tempY_POS*2-4);
-            printf("%s",message3);
-            tempY_POS = tempheight + 3;
-            gotoxy(X_POS,++tempY_POS);
             exit(0);
-
         }
         else
         {
-            mainMenu("File is loaded","Saved!");
+            mainMenu("File is loaded","Not saved!");
         }
     }
+}
+
+
+
+void save_data(HANDLE console)
+{
+
+    check_file_exist();
+    drawTitle("Save");
+    ShowConsoleCursor(0, console);
+    draw_box(HEIGHT/2, WIDTH, X_POS-1, Y_POS-1);
+
+    tempY_POS = Y_POS;
+
+    gotoxy(X_POS,tempY_POS);
+    printf("Name the file in which data will be saved: ");
+
+    gotoxy(X_POS,++tempY_POS);
+    char *input = enterData(FILE_NAME_SIZE, tempY_POS, console);
+
+    char holder[strlen(input)];
+    strcpy(holder,input);
+    free(input);
+    strcat(holder, ".txt");
+
+    FILE*f;
+    f = fopen(holder,"w");
+
+    int i;
+    for(i = 0; i<count; i++)
+    {
+        fprintf(f,"%s,",s[i].fname);
+        fprintf(f,"%s,",s[i].lname);
+        fprintf(f,"%d-%d-%d,", s[i].DOB.day, s[i].DOB.month, s[i].DOB.year);
+        fprintf(f,"%s,",s[i].address);
+        fprintf(f,"%lu,",s[i].phonum);
+        fprintf(f,"%s\n",s[i].email);
+    }
+    gotoxy(X_POS,++tempY_POS);
+    printf("Your work has been saved!");
+    fclose(f);
+
+    gotoxy(X_POS,++tempY_POS);
+    printf("Exit the program?");
+    int selection = menu("yes no", HEIGHT, WIDTH);
+    if(selection == 0)
+    {
+        char message3[] = "program exit successfully!";
+        draw_box(2, WIDTH-10, X_POS+4, tempY_POS*2-5);
+        gotoxy(((WIDTH-strlen(message3))/2)+2,tempY_POS*2-4);
+        printf("%s",message3);
+        tempY_POS = HEIGHT/2 + 3;
+        gotoxy(X_POS,++tempY_POS);
+        exit(0);
+
+    }
+    else
+    {
+        mainMenu("File is loaded","Saved!");
+    }
+}
