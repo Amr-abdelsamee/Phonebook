@@ -5,11 +5,11 @@
 - [Program Screenshots](#Program-Screenshots)
   - [Main menu](#Main-menu)
   - [Load](#Load)
+  - [View](#View)
   - [Search](#Search)
   - [Add](#Add)
   - [Delete](#Delete)
-  - [Modify](#Modify)
-  - [Print](#Print)
+  - [Edit](#Modify)
   - [Save](#Save)
   - [Exit](#Exit)
 - [Author](#Author)
@@ -40,11 +40,11 @@
 ### Delete
 <img src="https://github.com/Amr-abdelsamee/Phonebook/blob/main/src/screenshots/delete.png" alt="Delete"/>
 
-### Modify
-<img src="https://github.com/Amr-abdelsamee/Phonebook/blob/main/src/screenshots/modify.png" alt="Modify"/>
+### Edit
+<img src="https://github.com/Amr-abdelsamee/Phonebook/blob/main/src/screenshots/edit.png" alt="Modify"/>
 
-### Print
-<img src="https://github.com/Amr-abdelsamee/Phonebook/blob/main/src/screenshots/print.png" alt="Print"/>
+### View
+<img src="https://github.com/Amr-abdelsamee/Phonebook/blob/main/src/screenshots/view.png" alt="Print"/>
 
 ### Save
 <img src="https://github.com/Amr-abdelsamee/Phonebook/blob/main/src/screenshots/save.png" alt="Save"/>
