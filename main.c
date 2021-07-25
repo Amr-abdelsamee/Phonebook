@@ -1147,74 +1147,78 @@ void EXIT(HANDLE console)
         draw_box(2, WIDTH-10, X_POS+4, tempY_POS*2-2);
         int selection = menu("yes no", HEIGHT, WIDTH);
 
-        switch(selection)
+        if(selection == 0)
         {
-        case 0:
             draw_box(2, WIDTH-10, X_POS+4, tempY_POS*2-2);
             gotoxy(((WIDTH-strlen(message3))/2)+2,tempY_POS*2-1);
             printf("%s",message3);
             tempY_POS = HEIGHT/2 + 2;
             gotoxy(X_POS, tempY_POS+2);
-            exit(0);
-            break;
-        case 1:
-            mainMenu("File is loaded","Not saved!");
-            break;
+            exit(0);}
+            else
+            {
+                mainMenu("File is loaded","Not saved!");
+            }
         }
     }
-}
 
 
 
-void save_data(HANDLE console)
-{
-
-    check_file_exist();
-    drawTitle("Save");
-    ShowConsoleCursor(0, console);
-    draw_box(HEIGHT/2, WIDTH, X_POS-1, Y_POS-1);
-
-    tempheight = HEIGHT/2;
-    tempY_POS = Y_POS;
-
-    gotoxy(X_POS,tempY_POS);
-    printf("Name the file in which data will be saved: ");
-    gotoxy(X_POS,++tempY_POS);
-    printf("e.g(filename.txt)");
-
-    gotoxy(X_POS,++tempY_POS);
-    char *input = enterData(FILE_NAME_SIZE, tempY_POS, console);
-    FILE*f;
-    f = fopen(input,"w");
-    free(input);
-    int i;
-    for(i = 0; i<count; i++)
+    void save_data(HANDLE console)
     {
-        fprintf(f,"%s,",s[i].fname);
-        fprintf(f,"%s,",s[i].lname);
-        fprintf(f,"%d-%d-%d,", s[i].DOB.day, s[i].DOB.month, s[i].DOB.year);
-        fprintf(f,"%s,",s[i].address);
-        fprintf(f,"%s,",s[i].phonum);
-        fprintf(f,"%s\n",s[i].email);
-    }
-    gotoxy(X_POS,++tempY_POS);
-    printf("Your work has been saved!");
-    fclose(f);
 
-    int redo = again(tempY_POS, tempheight, console);
-    if(redo == 1)
-    {
-        mainMenu("File is loaded","Saved!");
-    }
-    else
-    {
-        tempY_POS +=5;
+        check_file_exist();
+        drawTitle("Save");
+        ShowConsoleCursor(0, console);
+        draw_box(HEIGHT/2, WIDTH, X_POS-1, Y_POS-1);
 
-        int tempX_POS = WIDTH/2;
-        gotoxy(tempX_POS, tempY_POS);
-        printf("program exit successfully!");
-        tempY_POS = tempheight + 4;
+        tempheight = HEIGHT/2;
+        tempY_POS = Y_POS;
+
+        gotoxy(X_POS,tempY_POS);
+        printf("Name the file in which data will be saved: ");
+
         gotoxy(X_POS,++tempY_POS);
-        exit(0);
+        char *input = enterData(FILE_NAME_SIZE, tempY_POS, console);
+
+        char holder[strlen(input)];
+        strcpy(holder,input);
+        free(input);
+        strcat(holder, ".txt");
+
+        FILE*f;
+        f = fopen(holder,"w");
+
+        int i;
+        for(i = 0; i<count; i++)
+        {
+            fprintf(f,"%s,",s[i].fname);
+            fprintf(f,"%s,",s[i].lname);
+            fprintf(f,"%d-%d-%d,", s[i].DOB.day, s[i].DOB.month, s[i].DOB.year);
+            fprintf(f,"%s,",s[i].address);
+            fprintf(f,"%lu,",s[i].phonum);
+            fprintf(f,"%s\n",s[i].email);
+        }
+        gotoxy(X_POS,++tempY_POS);
+        printf("Your work has been saved!");
+        fclose(f);
+
+        gotoxy(X_POS,++tempY_POS);
+        printf("Exit the program?");
+        int selection = menu("yes no", HEIGHT, WIDTH);
+        if(selection == 0)
+        {
+            char message3[] = "program exit successfully!";
+            draw_box(2, WIDTH-10, X_POS+4, tempY_POS*2-5);
+            gotoxy(((WIDTH-strlen(message3))/2)+2,tempY_POS*2-4);
+            printf("%s",message3);
+            tempY_POS = tempheight + 3;
+            gotoxy(X_POS,++tempY_POS);
+            exit(0);
+
+        }
+        else
+        {
+            mainMenu("File is loaded","Saved!");
+        }
     }
-}
