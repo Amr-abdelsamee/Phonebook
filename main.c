@@ -430,6 +430,7 @@ void Add(int f, HANDLE console)
     tempY_POS = Y_POS;
     gotoxy(X_POS, tempY_POS);
 
+
     char *input;
     printf("First name: ");
     gotoxy(X_POS, ++tempY_POS);
@@ -437,13 +438,29 @@ void Add(int f, HANDLE console)
     strcpy(s[f].fname,input);
     free(input);
 
-
+    int valid = 0;
     // last name
-    gotoxy(X_POS,++tempY_POS);
-    printf("Last name: ");
-    gotoxy(X_POS,++tempY_POS);
-    input = enterData(LAST_NAME_SIZE, tempY_POS, console);
-    strcpy(s[f].lname,input);
+    do
+    {
+        tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+        gotoxy(X_POS,++tempY_POS);
+        printf("Last name: ");
+        gotoxy(X_POS,++tempY_POS);
+        input = enterData(LAST_NAME_SIZE, tempY_POS, console);
+        if(!strlen(input))
+        {
+            tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+            gotoxy(X_POS, ++tempY_POS);
+            printf("**Last name can not be empty**\a");
+            valid = 0;
+        }
+        else
+        {
+            valid = 1;
+            strcpy(s[f].lname,input);
+        }
+    }
+    while(!valid);
     free(input);
 
 
@@ -456,7 +473,7 @@ void Add(int f, HANDLE console)
     int dayValid = 0;
     int monthValid = 0;
     int yearValid = 0;
-    int valid = 0;
+    valid = 0;
 
     do
     {
@@ -486,6 +503,14 @@ void Add(int f, HANDLE console)
         gotoxy(X_POS,++tempY_POS);
         year = enterData(4, tempY_POS, console);
 
+        if(!strlen(day) || !strlen(month) || !strlen(year))
+        {
+            tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+            gotoxy(X_POS, ++tempY_POS);
+            printf("**some info are missing**\a");
+            valid = 0;
+        }
+
         dayValid  = enterNumber(day);
         monthValid = enterNumber(month);
         yearValid  = enterNumber(year);
@@ -501,8 +526,15 @@ void Add(int f, HANDLE console)
         {
             valid = 1;
         }
+        if((s[f].DOB.day < 0 || s[f].DOB.day > 31)||(s[f].DOB.month > 12 || s[f].DOB.month < 0)||(s[f].DOB.year > 2021 || s[f].DOB.year < 1900))
+        {
+            tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+            gotoxy(X_POS, ++tempY_POS);
+            printf("**Incorrect Date**\a");
+            valid = 0;
+        }
     }
-    while(((s[f].DOB.day < 0 || s[f].DOB.day > 31)||(s[f].DOB.month > 12 || s[f].DOB.month < 0)||(s[f].DOB.year > 2021 || s[f].DOB.year < 1900)) && !valid);
+    while(!valid);
     s[f].DOB.day = atoi(day);
     s[f].DOB.month = atoi(month);
     s[f].DOB.year = atoi(year);
