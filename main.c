@@ -6,10 +6,10 @@
 #include "Console Window.h"
 #include "Menu.h"
 
+#define MAX_CONTACTS 100
 #define FIRST_NAME_SIZE 15
 #define LAST_NAME_SIZE 15
 #define ADDRESS_SIZE 40
-#define PHONE_NO_SIZE 12
 #define EMAIL_SIZE 40
 #define FILE_NAME_SIZE 50 // same as width of the frame
 
@@ -20,7 +20,7 @@
 #define Y_POS 4
 
 /// problems in code:-
-/// 1- read integers for delete function crash if user enter chars
+//1- read integers for delete function crash if user enter chars -- DONE
 /// 2- erase after typing in the enterdata() function
 /// 3- extend box() & check boundry() are not applied in the hole functions only in search() function
 /// 4- read file path because enterdata() function prevent long names as I make it do
@@ -41,14 +41,14 @@ typedef struct
     char lname[LAST_NAME_SIZE];
     date DOB;
     char address[ADDRESS_SIZE];
-    char phonum[PHONE_NO_SIZE];
+    unsigned long phonum;
     char email[EMAIL_SIZE];
 } contact;
 
 
 
 int count = 0; //count used to count number of contacts in the entered text file
-contact s[100];// max number of conatcts
+contact s[MAX_CONTACTS];// max number of conatcts
 int file_exist = 0; // if 0 means no file is loaded into the program yet 1 means the opposite
 int tempheight; // holders for height used in function as temporary value
 int tempY_POS = 0; // holders for Y position used in function as temporary value
@@ -87,18 +87,23 @@ void mainMenu(char loadmessage[], char savemessage[])
         load(console);
         break;
     case 1:
+        system("cls");
         Search(console);
         break;
     case 2:
+        system("cls");
         Add(404,console);
         break;
     case 3:
+        system("cls");
         Delete(console);
         break;
     case 4:
+        system("cls");
         Modify(console);
         break;
     case 5:
+        system("cls");
         printer(console);
         break;
     case 6:
@@ -241,16 +246,16 @@ char* enterData(int max, int tempY_POS, HANDLE console)
     {
         ++tempX_POS;
         cha = _getch();
-        //if to handle the enter button and if backspace is pressed at the beginning
+        //if to handle if the backspace is pressed at the beginning
         if(i == 0 && cha == 8)continue;
         if(cha == 13)break;
 
         // if to handle erasing
         if(cha == 8 && i != 0)
         {
-            cha = ' ';
             --tempX_POS;
             gotoxy(--tempX_POS,tempY_POS);
+            cha = ' ';
             _putch(cha);
             gotoxy(tempX_POS,tempY_POS);
             continue;
@@ -262,6 +267,24 @@ char* enterData(int max, int tempY_POS, HANDLE console)
     entered[i] = '\0';
     ShowConsoleCursor(0, console);
     return entered;
+}
+
+
+
+int enterNumber(char* number)
+{
+    int n = strlen(number);
+    int z = 1;
+    int i;
+    for ( i = 0 ; i < n; i++ )
+    {
+        if(!isdigit(number[0]))
+        {
+            z = 0;
+            break;
+        }
+    }
+    return z;
 }
 
 
@@ -298,7 +321,7 @@ void load(HANDLE console)
             fscanf(f,"%d%c",&s[count].DOB.month,&temp);
             fscanf(f,"%d%c",&s[count].DOB.year,&temp);
             fscanf(f,"%[^,],",s[count].address);
-            fscanf(f,"%[^,],",s[count].phonum);
+            fscanf(f,"%lu%c",&s[count].phonum);
             fscanf(f,"%[^\n]\n",s[count].email);
             count++;
         }
@@ -363,7 +386,7 @@ void Search(HANDLE console)
             printf(" Address: %s",s[i].address);
 
             gotoxy(X_POS,++tempY_POS);
-            printf(" phone number: %s",s[i].phonum);
+            printf(" phone number: %lu",s[i].phonum);
 
             gotoxy(X_POS,++tempY_POS);
             printf(" E-mail: %s",s[i].email);
@@ -410,21 +433,35 @@ void Add(int f, HANDLE console)
 
     tempheight = HEIGHT;
     tempY_POS = Y_POS;
-    gotoxy(X_POS,tempY_POS);
+    gotoxy(X_POS, tempY_POS);
 
     char *input;
     printf("First name: ");
-    gotoxy(X_POS,++tempY_POS);
+    gotoxy(X_POS, ++tempY_POS);
     input = enterData(FIRST_NAME_SIZE, tempY_POS, console);
     strcpy(s[f].fname,input);
     free(input);
 
+
+    // last name
     gotoxy(X_POS,++tempY_POS);
     printf("Last name: ");
     gotoxy(X_POS,++tempY_POS);
     input = enterData(LAST_NAME_SIZE, tempY_POS, console);
     strcpy(s[f].lname,input);
     free(input);
+
+
+    // Date of birth
+    // char to hold the integer to check isdigit() function then atoi transfer them to int variables
+    char* day;
+    char* month;
+    char* year;
+
+    int dayValid = 0;
+    int monthValid = 0;
+    int yearValid = 0;
+    int valid = 0;
 
     do
     {
@@ -435,11 +472,48 @@ void Add(int f, HANDLE console)
         }
         gotoxy(X_POS,++tempY_POS);
         printf("Date Of Birth(day month year):");
+
+        tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
         gotoxy(X_POS,++tempY_POS);
-        printf(">");
-        scanf("%d%d%d", &s[f].DOB.day, &s[f].DOB.month, &s[f].DOB.year);
+        printf("Day:");
+        gotoxy(X_POS,++tempY_POS);
+        day = enterData(2, tempY_POS, console);
+
+        tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+        gotoxy(X_POS,++tempY_POS);
+        printf("Month:");
+        gotoxy(X_POS,++tempY_POS);
+        month = enterData(2, tempY_POS, console);
+
+        tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+        gotoxy(X_POS,++tempY_POS);
+        printf("Year:");
+        gotoxy(X_POS,++tempY_POS);
+        year = enterData(4, tempY_POS, console);
+
+        dayValid  = enterNumber(day);
+        monthValid = enterNumber(month);
+        yearValid  = enterNumber(year);
+
+        if(!dayValid || !monthValid || !yearValid )
+        {
+            tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+            gotoxy(X_POS, ++tempY_POS);
+            printf("**Invalid Date**\a");
+            valid = 0;
+        }
+        else
+        {
+            valid = 1;
+        }
     }
-    while((s[f].DOB.day < 0 || s[f].DOB.day > 31)||(s[f].DOB.month > 12 || s[f].DOB.month < 0)||(s[f].DOB.year > 2020 || s[f].DOB.year < 1900));
+    while(((s[f].DOB.day < 0 || s[f].DOB.day > 31)||(s[f].DOB.month > 12 || s[f].DOB.month < 0)||(s[f].DOB.year > 2021 || s[f].DOB.year < 1900)) && !valid);
+    s[f].DOB.day = atoi(day);
+    s[f].DOB.month = atoi(month);
+    s[f].DOB.year = atoi(year);
+    free(day);
+    free(month);
+    free(year);
 
     gotoxy(X_POS,++tempY_POS);
     printf("Address: ");
@@ -448,44 +522,41 @@ void Add(int f, HANDLE console)
     strcpy(s[f].address,input);
     free(input);
 
-    int z = 0;
+    char* phone;
+    valid = 0;
     do
     {
-        if(tempY_POS >= tempheight)
+        int error1 = 0;
+        tempheight = checkBoundary(3,tempY_POS,X_POS,tempheight);
+        gotoxy(X_POS,++tempY_POS);
+        printf("Phone number: ");
+        gotoxy(X_POS,++tempY_POS);
+        phone  = enterData(11, tempY_POS, console);
+        valid = enterNumber(phone);
+        if(!valid)
         {
-            extend_box(3,WIDTH,X_POS-1,tempY_POS);
-            tempheight += 3;
+            tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+            gotoxy(X_POS,++tempY_POS);
+            printf("**Invalid number**\a");
+            error1 = 1;
         }
-        gotoxy(X_POS,++tempY_POS);
-        printf("Phone number:");
-        gotoxy(X_POS,++tempY_POS);
-        printf(">");
-        scanf("%11s", s[f].phonum);
 
-        int n = strlen(s[f].phonum);
-        z = 0 ;
-        int x;
-        for ( x =0 ; x < n; x++ )
+        if((strlen(phone) < 11 || strlen(phone) > 11) && !error1)
         {
-            if(!isdigit(s[f].phonum[x]))
-            {
-                z = 1;
-                if(tempY_POS >= tempheight)
-                {
-                    extend_box(3,WIDTH,X_POS-1,tempY_POS);
-                    tempheight += 3;
-                }
-                gotoxy(X_POS,++tempY_POS);
-                printf("**Invalid Phone number**\a");
-                break;
-            }
+            valid = 0;
+            tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+            gotoxy(X_POS,++tempY_POS);
+            printf("**Phone number must be 11 digit**\a");
         }
     }
-    while(z);
+    while(!valid);
+    s[f].phonum = atol(phone);
+    free(phone);
 
 
-    int check=0, i=0;
-    char x[20],y='@';
+
+    int check = 0, i = 0;
+    char x[20], y = '@';
 
     while(check == 0)
     {
@@ -689,22 +760,23 @@ void Delete(HANDLE console)
     gotoxy(X_POS,++tempY_POS);
     char *input = enterData(LAST_NAME_SIZE, tempY_POS, console);
 
-    int check = 0;
+    int numberOfFound = 0;
     int i,x = strlen(input);
 
     char srch[x];
     strcpy(srch,input);
     free(input);
+
     for(i = 0; i < count; i++)
     {
         if( strcmp(srch, s[i].lname) == 0 )
         {
-            if(check == 0)
+            if(numberOfFound == 0)
             {
                 gotoxy(X_POS,++tempY_POS);
                 printf("Found contacts :-");
             }
-            check++;
+            numberOfFound++;
             if(i*9 > tempY_POS)
             {
                 extend_box(9,WIDTH,X_POS-1,tempY_POS);
@@ -712,7 +784,7 @@ void Delete(HANDLE console)
             }
 
             gotoxy(X_POS,++tempY_POS);
-            printf("No.%d",i);
+            printf("Contact No.%d",i);
             gotoxy(X_POS,++tempY_POS);
             printf(" First name: %s",s[i].fname);
             gotoxy(X_POS,++tempY_POS);
@@ -722,82 +794,119 @@ void Delete(HANDLE console)
             gotoxy(X_POS,++tempY_POS);
             printf(" Address: %s",s[i].address);
             gotoxy(X_POS,++tempY_POS);
-            printf(" phone number: %s",s[i].phonum);
+            printf(" phone number: %lu",s[i].phonum);
             gotoxy(X_POS,++tempY_POS);
             printf(" E-mail: %s",s[i].email);
             gotoxy(X_POS,++tempY_POS);
-            printf("\n");
+
         }
     }
 
-    int y[check], z = 0;
-    for(i=0; i<count; i++)
+    int found[numberOfFound]; // array with size of the found contacts to holds their index
+    int z = 0;
+// loop to assign the number of the found contacts in y array
+    for(i = 0; i < count; i++)
     {
         if( strcmp(srch, s[i].lname) == 0 )
         {
-            y[z] = i;
+            found[z] = i;
             z++;
         }
     }
 
-    if(check)
+    if(numberOfFound)
     {
         int n;
-        z = 1;
-        gotoxy(X_POS,++tempY_POS);
-        while(z)
+        int valid = 0;
+        int exist = 0;
+        char* deleteIndex;
+        do
         {
-            gotoxy(X_POS,tempY_POS);
-            printf("Please a Enter valid Contact number: ");
-            ShowConsoleCursor(1, console);
-            scanf("%d",&n);
-            ShowConsoleCursor(0, console);
-
-            for(i=0; i<check; i++)
+            tempheight = checkBoundary(3,tempY_POS,X_POS,tempheight);
+            gotoxy(X_POS,++tempY_POS);
+            printf("Enter contact number to delete: ");
+            gotoxy(X_POS,++tempY_POS);
+            deleteIndex  = enterData(1 + (int)log10(count), tempY_POS, console); //1 + (int)log10(count) get the length of the total number of contacts
+            valid = enterNumber(deleteIndex);
+            if(!valid)
             {
-                if(n == y[i]) z = 0;
-                else
-                {
-                    break;
-                    --tempY_POS;
-                    printf("/a");
+                tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+                gotoxy(X_POS,++tempY_POS);
+                printf("**Numbers only!**\a");
+            }
 
+
+            if(valid)
+            {
+                n = atoi(deleteIndex);
+                for(i = 0; i < numberOfFound; i++)
+                {
+
+                    if(n == found[i])
+                    {
+                        exist = 1;
+                    }
+                }
+
+                if(!exist)
+                {
+                    tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
+                    gotoxy(X_POS,++tempY_POS);
+                    printf("**Numbers does not exist!**\a");
                 }
             }
         }
-        count--;
-        contact p[count];
-        z = 0;
-        for(i = 0; i < count + 1; i++)
-        {
-            if(i != n )
+        while(!valid || !exist);
+
+        free(deleteIndex);
+
+        /*
+            while(!valid)
             {
-                p[z] = s[i];
-                z++;
-            }
-        }
-        for(i = 0; i < count + 1; i++)
+                gotoxy(X_POS,tempY_POS);
+                printf("Enter contact number to delete: ");
+                ShowConsoleCursor(1, console);
+                scanf("%d",&n);
+                ShowConsoleCursor(0, console);
+
+                for(i = 0; i < found; i++)
+                {
+                    if(n == y[i])
+                    {
+                        valid = 1;
+                    }
+                }
+            }*/
+
+
+        // delete goes here
+        for(i = n; i < count + 1; i++)
         {
-            s[i] = p[i];
+            s[i] = s[i+1];
         }
-        if(tempY_POS+5 >= tempheight)
-        {
-            extend_box(5,WIDTH,X_POS-1,tempY_POS);
-            tempheight += 4;
-        }
+        --count;
+
+
+        tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
         gotoxy(X_POS,++tempY_POS);
         printf("Delete complete!");
     }
     else
     {
+        tempheight = checkBoundary(2,tempY_POS,X_POS,tempheight);
         gotoxy(X_POS,++tempY_POS);
         printf("Name is not found!!\a");
     }
+
+
+
+
 
     // check if operation will be done again or do another operation
     int redo = again(tempY_POS, tempheight, console);
     if(redo == 0)
     {
+        system("cls");
         Delete(console);
     }
     else
@@ -838,7 +947,7 @@ void printer(HANDLE console)
         gotoxy(X_POS,++tempY_POS);
         printf(" Address: %s",s[i].address);
         gotoxy(X_POS,++tempY_POS);
-        printf(" Phone Nember: %s",s[i].phonum);
+        printf(" Phone Nember: %lu",s[i].phonum);
         gotoxy(X_POS,++tempY_POS);
         printf(" E-mail: %s",s[i].email);
         gotoxy(X_POS,++tempY_POS);
