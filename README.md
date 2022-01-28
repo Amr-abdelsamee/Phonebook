@@ -15,10 +15,10 @@
 
 
 ## Over-view
- Phonebook program is a console application its purpose is to read a file that conatain contacts information.
- These contacts must be written in a certain order to ensure that the program runs well.
- The program allows the user to search, add, delete, modify and view the contacts. 
- Also, The program allows the user to save his modification.
+The phonebook program is a console application its purpose is to read a file containing contacts information. 
+These contacts must be written in a certain order to ensure that the program runs well. 
+The program allows the user to search, add, delete, modify and view the contacts. 
+Also, The program allows the user to save his modification.
 
 
  ## Program-Screenshots
