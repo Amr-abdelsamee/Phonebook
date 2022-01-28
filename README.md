@@ -53,5 +53,6 @@
 In case the user didn't load a file and exit the program
 <img src="https://github.com/Amr-abdelsamee/Phonebook/blob/main/src/screenshots/exit%20v1.png" alt="Exitv1"/>
 
+
 In case the user have loaded a file and exit the program
 <img src="https://github.com/Amr-abdelsamee/Phonebook/blob/main/src/screenshots/exit%20v2.png" alt="Exitv2"/>
