@@ -12,7 +12,6 @@
   - [Edit](#Modify)
   - [Save](#Save)
   - [Exit](#Exit)
-- [Author](#Author)
 
 
 ## Over-view
@@ -20,6 +19,7 @@
  These contacts must be written in the file in acertain order to ensure that the program runs well.
  The program allow the user to search, add, delete, modify and print the contacts after work is done 
  the user should go to save option to save the work or can exit without saving.
+
 
  ## Program-Screenshots
 
@@ -55,11 +55,3 @@ In case the user didn't load a file and exit the program
 
 In case the user have loaded a file and exit the program
 <img src="https://github.com/Amr-abdelsamee/Phonebook/blob/main/src/screenshots/exit%20v2.png" alt="Exitv2"/>
-
-
-
-## Author
-This project was made by Amr Abdelsamee Youssef
-
-- **Email:** Amr_abdelsamee@yahoo.com
-- **Facebook:**[Amr Abd ELsamee](https://www.facebook.com/Amr.Abdelsame3/)
